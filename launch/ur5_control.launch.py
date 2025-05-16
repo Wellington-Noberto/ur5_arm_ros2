@@ -15,16 +15,16 @@ def generate_launch_description():
         PathJoinSubstitution([FindExecutable(name="xacro")]),
         " ",
         PathJoinSubstitution([
-            FindPackageShare("ur_description"),
+            FindPackageShare("ur5_arm"),
             "urdf",
-            "ur_mocked.urdf.xacro"
+            "ur5.urdf.xacro"
         ]),
         " ",
         "name:=ur",
         " ",
         "ur_type:=ur5e",
         " ",
-        "prefix:=''",
+        "tf_prefix:=''",
     ])
 
     # ToDO: Create a xacro that contains the model and control
@@ -69,10 +69,16 @@ def generate_launch_description():
 		output="both",
     )
 
-    robot_controller_spawner = Node(
+    arm_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["ur5_arm_controller", "--param-file", robot_controllers],
+    )
+
+    gripper_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["robotiq_gripper_controller", "--param-file", robot_controllers],
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -84,7 +90,7 @@ def generate_launch_description():
 
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=robot_controller_spawner,
+            target_action=arm_controller_spawner,
             on_exit=[joint_state_broadcaster_spawner],
         )
     )
@@ -95,8 +101,8 @@ def generate_launch_description():
         # static_tf,
         # run_move_group_node,
         ros2_control_node,
-        robot_controller_spawner,
-        # joint_state_broadcaster_spawner,
+        arm_controller_spawner,
+        gripper_controller_spawner,
         rviz_node,
         delay_joint_state_broadcaster_after_robot_controller_spawner
     ])

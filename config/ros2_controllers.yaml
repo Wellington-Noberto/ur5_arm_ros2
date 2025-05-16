@@ -6,8 +6,8 @@ controller_manager:
     ur5_arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-    # panda_hand_controller:
-    #   type: position_controllers/GripperActionController
+    robotiq_gripper_controller:
+      type: robotiq_controllers/RobotiqActivationController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
