@@ -1,0 +1,203 @@
+[0.000000] (-) TimerEvent: {}
+[0.000629] (ur5_arm) JobQueued: {'identifier': 'ur5_arm', 'dependencies': OrderedDict()}
+[0.000701] (ur5_arm) JobStarted: {'identifier': 'ur5_arm'}
+[0.006314] (ur5_arm) JobProgress: {'identifier': 'ur5_arm', 'progress': 'cmake'}
+[0.006577] (ur5_arm) Command: {'cmd': ['/usr/bin/cmake', '/home/wellington/ws_moveit/src/ur5_arm_ros2', '-DCMAKE_INSTALL_PREFIX=/home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm'], 'cwd': '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'wellington'), ('LC_TIME', 'pt_BR.UTF-8'), ('XDG_SESSION_TYPE', 'x11'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/wellington'), ('OLDPWD', '/home/wellington/ws_moveit/src'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/terminator.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'pt_BR.UTF-8'), ('MANAGERPID', '2243'), ('LC_CTYPE', 'pt_BR.UTF-8'), ('SYSTEMD_EXEC_PID', '2714'), ('DBUS_SESSION_BUS_ADDRESS', ''), ('COLORTERM', 'truecolor'), ('TERMINATOR_DBUS_NAME', 'net.tenshu.Terminator23558193cd9818af7fe4d2c2f5bd9d00f'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '9633'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'wellington'), ('JOURNAL_STREAM', '8:10638'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'wellington'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/N305-SP01291-WELLINGTON:@/tmp/.ICE-unix/2690,unix/N305-SP01291-WELLINGTON:/tmp/.ICE-unix/2690'), ('INVOCATION_ID', '4b0859d3384b4e78819a8aa4b43c75dc'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'pt_BR.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':1'), ('TERMINATOR_DBUS_PATH', '/net/tenshu/Terminator2'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('IBUS_DISABLE_SNOOPER', '1'), ('LC_TELEPHONE', 'pt_BR.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'pt_BR.UTF-8'), ('TERMINATOR_UUID', 'urn:uuid:8e478109-7f88-4234-8d53-99cf87a79872'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'pt_BR.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'pt_BR.UTF-8'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'pt_BR.UTF-8'), ('LC_PAPER', 'pt_BR.UTF-8'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.099971] (-) TimerEvent: {}
+[0.160859] (ur5_arm) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.200132] (-) TimerEvent: {}
+[0.210691] (ur5_arm) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.217079] (ur5_arm) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.285803] (ur5_arm) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.298612] (ur5_arm) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.299277] (ur5_arm) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.299801] (ur5_arm) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.300193] (-) TimerEvent: {}
+[0.301684] (ur5_arm) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.362795] (ur5_arm) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.368601] (ur5_arm) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.368839] (ur5_arm) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.369083] (ur5_arm) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.371355] (ur5_arm) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.400399] (-) TimerEvent: {}
+[0.468170] (ur5_arm) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.500594] (-) TimerEvent: {}
+[0.522137] (ur5_arm) StdoutLine: {'line': b'-- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.554994] (ur5_arm) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.558797] (ur5_arm) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.563183] (ur5_arm) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.570737] (ur5_arm) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.579988] (ur5_arm) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.600334] (ur5_arm) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.600655] (-) TimerEvent: {}
+[0.601489] (ur5_arm) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.665318] (ur5_arm) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.688189] (ur5_arm) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.700823] (-) TimerEvent: {}
+[0.721839] (ur5_arm) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.737325] (ur5_arm) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[0.801035] (-) TimerEvent: {}
+[0.811294] (ur5_arm) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[0.811958] (ur5_arm) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[0.901163] (-) TimerEvent: {}
+[0.915231] (ur5_arm) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[0.916882] (ur5_arm) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[0.954796] (ur5_arm) StdoutLine: {'line': b'-- Found ros2_control: 2.49.0 (/opt/ros/humble/share/ros2_control/cmake)\n'}
+[0.955866] (ur5_arm) StdoutLine: {'line': b'-- Found gazebo_ros: 3.9.0 (/opt/ros/humble/share/gazebo_ros/cmake)\n'}
+[0.965562] (ur5_arm) StdoutLine: {'line': b'-- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.2") \n'}
+[0.966800] (ur5_arm) StdoutLine: {'line': b"-- Checking for module 'bullet>=2.82'\n"}
+[0.977838] (ur5_arm) StdoutLine: {'line': b'--   Found bullet, version 3.05\n'}
+[1.001280] (-) TimerEvent: {}
+[1.101714] (-) TimerEvent: {}
+[1.131908] (ur5_arm) StdoutLine: {'line': b'-- Found fcl: /usr/include (found suitable version "0.7.0", minimum required is "0.5.0") \n'}
+[1.201944] (-) TimerEvent: {}
+[1.213105] (ur5_arm) StdoutLine: {'line': b'-- Found assimp: /usr/include (found version "5.2.0") \n'}
+[1.235228] (ur5_arm) StdoutLine: {'line': b'-- Found DART: /usr/include (Required is at least version "6.6") found components: dart \n'}
+[1.252925] (ur5_arm) StdoutLine: {'line': b'-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.40.0") found components: thread system filesystem program_options regex iostreams date_time \n'}
+[1.301642] (ur5_arm) StdoutLine: {'line': b'-- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found version "3.12.4") \n'}
+[1.301945] (-) TimerEvent: {}
+[1.312907] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.336743] (ur5_arm) StdoutLine: {'line': b'-- Searching for dependencies of ignition-math6\n'}
+[1.339411] (ur5_arm) StdoutLine: {'line': b'-- Looking for OGRE...\n'}
+[1.340120] (ur5_arm) StdoutLine: {'line': b'-- OGRE_PREFIX_WATCH changed.\n'}
+[1.346658] (ur5_arm) StdoutLine: {'line': b"-- Checking for module 'OGRE'\n"}
+[1.365252] (ur5_arm) StdoutLine: {'line': b'--   Found OGRE, version 1.9.0\n'}
+[1.402093] (-) TimerEvent: {}
+[1.417635] (ur5_arm) StdoutLine: {'line': b'-- Found Ogre Ghadamon (1.9.0)\n'}
+[1.426456] (ur5_arm) StdoutLine: {'line': b'-- Found OGRE: optimized;/usr/lib/x86_64-linux-gnu/libOgreMain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreMain.so\n'}
+[1.433614] (ur5_arm) StdoutLine: {'line': b'-- Looking for OGRE_Paging...\n'}
+[1.436417] (ur5_arm) StdoutLine: {'line': b'-- Found OGRE_Paging: optimized;/usr/lib/x86_64-linux-gnu/libOgrePaging.so;debug;/usr/lib/x86_64-linux-gnu/libOgrePaging.so\n'}
+[1.436525] (ur5_arm) StdoutLine: {'line': b'-- Looking for OGRE_Terrain...\n'}
+[1.438847] (ur5_arm) StdoutLine: {'line': b'-- Found OGRE_Terrain: optimized;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so\n'}
+[1.438922] (ur5_arm) StdoutLine: {'line': b'-- Looking for OGRE_Property...\n'}
+[1.441391] (ur5_arm) StdoutLine: {'line': b'-- Found OGRE_Property: optimized;/usr/lib/x86_64-linux-gnu/libOgreProperty.so;debug;/usr/lib/x86_64-linux-gnu/libOgreProperty.so\n'}
+[1.441489] (ur5_arm) StdoutLine: {'line': b'-- Looking for OGRE_RTShaderSystem...\n'}
+[1.443987] (ur5_arm) StdoutLine: {'line': b'-- Found OGRE_RTShaderSystem: optimized;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so;debug;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so\n'}
+[1.444073] (ur5_arm) StdoutLine: {'line': b'-- Looking for OGRE_Volume...\n'}
+[1.446330] (ur5_arm) StdoutLine: {'line': b'-- Found OGRE_Volume: optimized;/usr/lib/x86_64-linux-gnu/libOgreVolume.so;debug;/usr/lib/x86_64-linux-gnu/libOgreVolume.so\n'}
+[1.446402] (ur5_arm) StdoutLine: {'line': b'-- Looking for OGRE_Overlay...\n'}
+[1.448998] (ur5_arm) StdoutLine: {'line': b'-- Found OGRE_Overlay: optimized;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so;debug;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so\n'}
+[1.500692] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.502140] (-) TimerEvent: {}
+[1.502469] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-transport8 -- found version 8.2.1\n'}
+[1.502714] (ur5_arm) StdoutLine: {'line': b'-- Searching for dependencies of ignition-transport8\n'}
+[1.512955] (ur5_arm) StdoutLine: {'line': b'-- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found suitable version "3.12.4", minimum required is "3") \n'}
+[1.518386] (ur5_arm) StdoutLine: {'line': b'-- Config-file not installed for ZeroMQ -- checking for pkg-config\n'}
+[1.521874] (ur5_arm) StdoutLine: {'line': b"-- Checking for module 'libzmq >= 4'\n"}
+[1.532783] (ur5_arm) StdoutLine: {'line': b'--   Found libzmq , version 4.3.4\n'}
+[1.571604] (ur5_arm) StdoutLine: {'line': b'-- Found ZeroMQ: TRUE (Required is at least version "4") \n'}
+[1.576983] (ur5_arm) StdoutLine: {'line': b"-- Checking for module 'uuid'\n"}
+[1.589738] (ur5_arm) StdoutLine: {'line': b'--   Found uuid, version 2.37.2\n'}
+[1.602329] (-) TimerEvent: {}
+[1.638836] (ur5_arm) StdoutLine: {'line': b'-- Found UUID: TRUE  \n'}
+[1.642357] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-msgs5 -- found version 5.8.1\n'}
+[1.643023] (ur5_arm) StdoutLine: {'line': b'-- Searching for dependencies of ignition-msgs5\n'}
+[1.664243] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.670374] (ur5_arm) StdoutLine: {'line': b"-- Checking for module 'tinyxml2'\n"}
+[1.684321] (ur5_arm) StdoutLine: {'line': b'--   Found tinyxml2, version 9.0.0\n'}
+[1.702450] (-) TimerEvent: {}
+[1.724086] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-msgs5 -- found version 5.8.1\n'}
+[1.728911] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-common3 -- found version 3.14.0\n'}
+[1.729593] (ur5_arm) StdoutLine: {'line': b'-- Searching for dependencies of ignition-common3\n'}
+[1.730269] (ur5_arm) StdoutLine: {'line': b'-- Looking for dlfcn.h - found\n'}
+[1.731042] (ur5_arm) StdoutLine: {'line': b'-- Looking for libdl - found\n'}
+[1.733065] (ur5_arm) StdoutLine: {'line': b'-- Found DL: TRUE  \n'}
+[1.747780] (ur5_arm) StdoutLine: {'line': b'-- Found tinyobjloader: /usr/lib/x86_64-linux-gnu/cmake/tinyobjloader/tinyobjloader-config.cmake (found version "2.0.0") \n'}
+[1.748387] (ur5_arm) StdoutLine: {'line': b'-- Searching for <ignition-common3> component [graphics]\n'}
+[1.749905] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-common3-graphics -- found version 3.14.0\n'}
+[1.750168] (ur5_arm) StdoutLine: {'line': b'-- Searching for dependencies of ignition-common3-graphics\n'}
+[1.750384] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.753057] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-fuel_tools4 -- found version 4.4.0\n'}
+[1.753260] (ur5_arm) StdoutLine: {'line': b'-- Searching for dependencies of ignition-fuel_tools4\n'}
+[1.802631] (-) TimerEvent: {}
+[1.825673] (ur5_arm) StdoutLine: {'line': b'-- Found CURL: /usr/lib/x86_64-linux-gnu/libcurl.so (found version "7.81.0")  \n'}
+[1.838650] (ur5_arm) StdoutLine: {'line': b"-- Checking for module 'jsoncpp'\n"}
+[1.853991] (ur5_arm) StdoutLine: {'line': b'--   Found jsoncpp, version 1.9.5\n'}
+[1.890686] (ur5_arm) StdoutLine: {'line': b'-- Found JSONCPP: TRUE  \n'}
+[1.897855] (ur5_arm) StdoutLine: {'line': b"-- Checking for module 'libzip'\n"}
+[1.902803] (-) TimerEvent: {}
+[1.912027] (ur5_arm) StdoutLine: {'line': b'--   Found libzip, version 1.7.3\n'}
+[1.949353] (ur5_arm) StdoutLine: {'line': b'-- Found ZIP: TRUE  \n'}
+[1.949758] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-common3 -- found version 3.14.0\n'}
+[1.950407] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.950664] (ur5_arm) StdoutLine: {'line': b'-- Looking for ignition-msgs5 -- found version 5.8.1\n'}
+[1.954034] (ur5_arm) StdoutLine: {'line': b'-- Gazebo version: 11.10\n'}
+[1.954293] (ur5_arm) StdoutLine: {'line': b"-- Checking for module 'tbb'\n"}
+[1.969044] (ur5_arm) StdoutLine: {'line': b'--   Found tbb, version 2021.5.0\n'}
+[2.002905] (-) TimerEvent: {}
+[2.008366] (ur5_arm) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[2.077757] (ur5_arm) StdoutLine: {'line': b"-- Added test 'cppcheck' to perform static code analysis on C / C++ code\n"}
+[2.077918] (ur5_arm) StdoutLine: {'line': b'-- Configured cppcheck include dirs: \n'}
+[2.077981] (ur5_arm) StdoutLine: {'line': b'-- Configured cppcheck exclude dirs and/or files: \n'}
+[2.078613] (ur5_arm) StdoutLine: {'line': b"-- Added test 'flake8' to check Python code syntax and style conventions\n"}
+[2.079700] (ur5_arm) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[2.080365] (ur5_arm) StdoutLine: {'line': b"-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257\n"}
+[2.083940] (ur5_arm) StdoutLine: {'line': b"-- Added test 'uncrustify' to check C / C++ code style\n"}
+[2.084086] (ur5_arm) StdoutLine: {'line': b'-- Configured uncrustify additional arguments: \n'}
+[2.084586] (ur5_arm) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[2.085086] (ur5_arm) StdoutLine: {'line': b'-- Configuring done\n'}
+[2.087503] (ur5_arm) StdoutLine: {'line': b'-- Generating done\n'}
+[2.089032] (ur5_arm) StdoutLine: {'line': b'-- Build files have been written to: /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm\n'}
+[2.096682] (ur5_arm) CommandEnded: {'returncode': 0}
+[2.097786] (ur5_arm) JobProgress: {'identifier': 'ur5_arm', 'progress': 'build'}
+[2.097815] (ur5_arm) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm', '--', '-j20', '-l20'], 'cwd': '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'wellington'), ('LC_TIME', 'pt_BR.UTF-8'), ('XDG_SESSION_TYPE', 'x11'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/wellington'), ('OLDPWD', '/home/wellington/ws_moveit/src'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/terminator.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'pt_BR.UTF-8'), ('MANAGERPID', '2243'), ('LC_CTYPE', 'pt_BR.UTF-8'), ('SYSTEMD_EXEC_PID', '2714'), ('DBUS_SESSION_BUS_ADDRESS', ''), ('COLORTERM', 'truecolor'), ('TERMINATOR_DBUS_NAME', 'net.tenshu.Terminator23558193cd9818af7fe4d2c2f5bd9d00f'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '9633'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'wellington'), ('JOURNAL_STREAM', '8:10638'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'wellington'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/N305-SP01291-WELLINGTON:@/tmp/.ICE-unix/2690,unix/N305-SP01291-WELLINGTON:/tmp/.ICE-unix/2690'), ('INVOCATION_ID', '4b0859d3384b4e78819a8aa4b43c75dc'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'pt_BR.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':1'), ('TERMINATOR_DBUS_PATH', '/net/tenshu/Terminator2'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('IBUS_DISABLE_SNOOPER', '1'), ('LC_TELEPHONE', 'pt_BR.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'pt_BR.UTF-8'), ('TERMINATOR_UUID', 'urn:uuid:8e478109-7f88-4234-8d53-99cf87a79872'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'pt_BR.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'pt_BR.UTF-8'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'pt_BR.UTF-8'), ('LC_PAPER', 'pt_BR.UTF-8'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[2.102975] (-) TimerEvent: {}
+[2.136349] (ur5_arm) CommandEnded: {'returncode': 0}
+[2.137182] (ur5_arm) JobProgress: {'identifier': 'ur5_arm', 'progress': 'install'}
+[2.147216] (ur5_arm) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm'], 'cwd': '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'wellington'), ('LC_TIME', 'pt_BR.UTF-8'), ('XDG_SESSION_TYPE', 'x11'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/wellington'), ('OLDPWD', '/home/wellington/ws_moveit/src'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/terminator.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'pt_BR.UTF-8'), ('MANAGERPID', '2243'), ('LC_CTYPE', 'pt_BR.UTF-8'), ('SYSTEMD_EXEC_PID', '2714'), ('DBUS_SESSION_BUS_ADDRESS', ''), ('COLORTERM', 'truecolor'), ('TERMINATOR_DBUS_NAME', 'net.tenshu.Terminator23558193cd9818af7fe4d2c2f5bd9d00f'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '9633'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'wellington'), ('JOURNAL_STREAM', '8:10638'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'wellington'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/N305-SP01291-WELLINGTON:@/tmp/.ICE-unix/2690,unix/N305-SP01291-WELLINGTON:/tmp/.ICE-unix/2690'), ('INVOCATION_ID', '4b0859d3384b4e78819a8aa4b43c75dc'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'pt_BR.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':1'), ('TERMINATOR_DBUS_PATH', '/net/tenshu/Terminator2'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('IBUS_DISABLE_SNOOPER', '1'), ('LC_TELEPHONE', 'pt_BR.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'pt_BR.UTF-8'), ('TERMINATOR_UUID', 'urn:uuid:8e478109-7f88-4234-8d53-99cf87a79872'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'pt_BR.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'pt_BR.UTF-8'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'pt_BR.UTF-8'), ('LC_PAPER', 'pt_BR.UTF-8'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[2.154184] (ur5_arm) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[2.154274] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//launch\n'}
+[2.154388] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//launch/ur5_control.launch.py\n'}
+[2.154445] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf\n'}
+[2.154568] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes\n'}
+[2.154624] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e\n'}
+[2.154651] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual\n'}
+[2.154678] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/wrist1.dae\n'}
+[2.155607] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/upperarm.dae\n'}
+[2.157701] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/base.dae\n'}
+[2.157978] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/wrist3.dae\n'}
+[2.158113] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/forearm.dae\n'}
+[2.159100] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/shoulder.dae\n'}
+[2.160664] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/wrist2.dae\n'}
+[2.161967] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision\n'}
+[2.162107] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/wrist3.stl\n'}
+[2.162168] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/forearm.stl\n'}
+[2.162337] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/base.stl\n'}
+[2.162463] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/upperarm.stl\n'}
+[2.162523] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/wrist1.stl\n'}
+[2.162599] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/shoulder.stl\n'}
+[2.162651] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/wrist2.stl\n'}
+[2.162725] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos\n'}
+[2.162787] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/CAM_Support2.stl\n'}
+[2.163065] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/RangeFinder.wbo\n'}
+[2.163188] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/Table.proto\n'}
+[2.163304] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/SolidBox.proto\n'}
+[2.163380] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/RobotiqArg2f140Model.proto\n'}
+[2.164002] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/CAM_support.STL\n'}
+[2.168678] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/ur5.urdf.xacro\n'}
+[2.168792] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/ur5e.urdf.xacro\n'}
+[2.168838] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/ur5_arm.ros2_control.xacro\n'}
+[2.168875] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/ur5e_joint_limited_robot.urdf.xacro\n'}
+[2.168910] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/_d435.urdf.xacro\n'}
+[2.168984] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//config\n'}
+[2.169033] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//config/ros2_controllers.yaml\n'}
+[2.169066] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//rviz\n'}
+[2.169101] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//rviz/view.rviz\n'}
+[2.169164] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ament_index/resource_index/package_run_dependencies/ur5_arm\n'}
+[2.169219] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ament_index/resource_index/parent_prefix_path/ur5_arm\n'}
+[2.169282] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/environment/ament_prefix_path.sh\n'}
+[2.169357] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/environment/ament_prefix_path.dsv\n'}
+[2.169421] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/environment/path.sh\n'}
+[2.169470] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/environment/path.dsv\n'}
+[2.169534] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/local_setup.bash\n'}
+[2.169581] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/local_setup.sh\n'}
+[2.169637] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/local_setup.zsh\n'}
+[2.169683] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/local_setup.dsv\n'}
+[2.169721] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/package.dsv\n'}
+[2.169767] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ament_index/resource_index/packages/ur5_arm\n'}
+[2.169836] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/cmake/ur5_armConfig.cmake\n'}
+[2.169876] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/cmake/ur5_armConfig-version.cmake\n'}
+[2.169926] (ur5_arm) StdoutLine: {'line': b'-- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/package.xml\n'}
+[2.171520] (ur5_arm) CommandEnded: {'returncode': 0}
+[2.185014] (ur5_arm) JobEnded: {'identifier': 'ur5_arm', 'rc': 0}
+[2.185358] (-) EventReactorShutdown: {}

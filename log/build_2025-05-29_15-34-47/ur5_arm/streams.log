@@ -1,0 +1,174 @@
+[0.006s] Invoking command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/wellington/ws_moveit/src/ur5_arm_ros2 -DCMAKE_INSTALL_PREFIX=/home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm
+[0.160s] -- The C compiler identification is GNU 11.4.0
+[0.210s] -- The CXX compiler identification is GNU 11.4.0
+[0.216s] -- Detecting C compiler ABI info
+[0.285s] -- Detecting C compiler ABI info - done
+[0.298s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.299s] -- Detecting C compile features
+[0.299s] -- Detecting C compile features - done
+[0.301s] -- Detecting CXX compiler ABI info
+[0.362s] -- Detecting CXX compiler ABI info - done
+[0.368s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.368s] -- Detecting CXX compile features
+[0.368s] -- Detecting CXX compile features - done
+[0.371s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.468s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.522s] -- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)
+[0.554s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.558s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.563s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.570s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.579s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.600s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.601s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.665s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[0.688s] -- Found FastRTPS: /opt/ros/humble/include  
+[0.721s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.737s] -- Looking for pthread.h
+[0.811s] -- Looking for pthread.h - found
+[0.811s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.915s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.916s] -- Found Threads: TRUE  
+[0.954s] -- Found ros2_control: 2.49.0 (/opt/ros/humble/share/ros2_control/cmake)
+[0.955s] -- Found gazebo_ros: 3.9.0 (/opt/ros/humble/share/gazebo_ros/cmake)
+[0.965s] -- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.2") 
+[0.966s] -- Checking for module 'bullet>=2.82'
+[0.977s] --   Found bullet, version 3.05
+[1.131s] -- Found fcl: /usr/include (found suitable version "0.7.0", minimum required is "0.5.0") 
+[1.213s] -- Found assimp: /usr/include (found version "5.2.0") 
+[1.235s] -- Found DART: /usr/include (Required is at least version "6.6") found components: dart 
+[1.252s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.40.0") found components: thread system filesystem program_options regex iostreams date_time 
+[1.301s] -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found version "3.12.4") 
+[1.312s] -- Looking for ignition-math6 -- found version 6.15.1
+[1.336s] -- Searching for dependencies of ignition-math6
+[1.339s] -- Looking for OGRE...
+[1.340s] -- OGRE_PREFIX_WATCH changed.
+[1.346s] -- Checking for module 'OGRE'
+[1.365s] --   Found OGRE, version 1.9.0
+[1.417s] -- Found Ogre Ghadamon (1.9.0)
+[1.426s] -- Found OGRE: optimized;/usr/lib/x86_64-linux-gnu/libOgreMain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreMain.so
+[1.433s] -- Looking for OGRE_Paging...
+[1.436s] -- Found OGRE_Paging: optimized;/usr/lib/x86_64-linux-gnu/libOgrePaging.so;debug;/usr/lib/x86_64-linux-gnu/libOgrePaging.so
+[1.436s] -- Looking for OGRE_Terrain...
+[1.438s] -- Found OGRE_Terrain: optimized;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so
+[1.438s] -- Looking for OGRE_Property...
+[1.441s] -- Found OGRE_Property: optimized;/usr/lib/x86_64-linux-gnu/libOgreProperty.so;debug;/usr/lib/x86_64-linux-gnu/libOgreProperty.so
+[1.441s] -- Looking for OGRE_RTShaderSystem...
+[1.443s] -- Found OGRE_RTShaderSystem: optimized;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so;debug;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so
+[1.443s] -- Looking for OGRE_Volume...
+[1.446s] -- Found OGRE_Volume: optimized;/usr/lib/x86_64-linux-gnu/libOgreVolume.so;debug;/usr/lib/x86_64-linux-gnu/libOgreVolume.so
+[1.446s] -- Looking for OGRE_Overlay...
+[1.448s] -- Found OGRE_Overlay: optimized;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so;debug;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so
+[1.500s] -- Looking for ignition-math6 -- found version 6.15.1
+[1.502s] -- Looking for ignition-transport8 -- found version 8.2.1
+[1.502s] -- Searching for dependencies of ignition-transport8
+[1.512s] -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found suitable version "3.12.4", minimum required is "3") 
+[1.518s] -- Config-file not installed for ZeroMQ -- checking for pkg-config
+[1.521s] -- Checking for module 'libzmq >= 4'
+[1.532s] --   Found libzmq , version 4.3.4
+[1.571s] -- Found ZeroMQ: TRUE (Required is at least version "4") 
+[1.576s] -- Checking for module 'uuid'
+[1.589s] --   Found uuid, version 2.37.2
+[1.638s] -- Found UUID: TRUE  
+[1.642s] -- Looking for ignition-msgs5 -- found version 5.8.1
+[1.642s] -- Searching for dependencies of ignition-msgs5
+[1.664s] -- Looking for ignition-math6 -- found version 6.15.1
+[1.670s] -- Checking for module 'tinyxml2'
+[1.684s] --   Found tinyxml2, version 9.0.0
+[1.724s] -- Looking for ignition-msgs5 -- found version 5.8.1
+[1.728s] -- Looking for ignition-common3 -- found version 3.14.0
+[1.729s] -- Searching for dependencies of ignition-common3
+[1.730s] -- Looking for dlfcn.h - found
+[1.730s] -- Looking for libdl - found
+[1.732s] -- Found DL: TRUE  
+[1.747s] -- Found tinyobjloader: /usr/lib/x86_64-linux-gnu/cmake/tinyobjloader/tinyobjloader-config.cmake (found version "2.0.0") 
+[1.748s] -- Searching for <ignition-common3> component [graphics]
+[1.749s] -- Looking for ignition-common3-graphics -- found version 3.14.0
+[1.750s] -- Searching for dependencies of ignition-common3-graphics
+[1.750s] -- Looking for ignition-math6 -- found version 6.15.1
+[1.752s] -- Looking for ignition-fuel_tools4 -- found version 4.4.0
+[1.753s] -- Searching for dependencies of ignition-fuel_tools4
+[1.825s] -- Found CURL: /usr/lib/x86_64-linux-gnu/libcurl.so (found version "7.81.0")  
+[1.838s] -- Checking for module 'jsoncpp'
+[1.853s] --   Found jsoncpp, version 1.9.5
+[1.890s] -- Found JSONCPP: TRUE  
+[1.897s] -- Checking for module 'libzip'
+[1.911s] --   Found libzip, version 1.7.3
+[1.949s] -- Found ZIP: TRUE  
+[1.949s] -- Looking for ignition-common3 -- found version 3.14.0
+[1.950s] -- Looking for ignition-math6 -- found version 6.15.1
+[1.950s] -- Looking for ignition-msgs5 -- found version 5.8.1
+[1.953s] -- Gazebo version: 11.10
+[1.954s] -- Checking for module 'tbb'
+[1.968s] --   Found tbb, version 2021.5.0
+[2.008s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[2.077s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[2.077s] -- Configured cppcheck include dirs: 
+[2.077s] -- Configured cppcheck exclude dirs and/or files: 
+[2.078s] -- Added test 'flake8' to check Python code syntax and style conventions
+[2.079s] -- Added test 'lint_cmake' to check CMake code style
+[2.080s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[2.083s] -- Added test 'uncrustify' to check C / C++ code style
+[2.083s] -- Configured uncrustify additional arguments: 
+[2.084s] -- Added test 'xmllint' to check XML markup files
+[2.084s] -- Configuring done
+[2.087s] -- Generating done
+[2.088s] -- Build files have been written to: /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm
+[2.097s] Invoked command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/wellington/ws_moveit/src/ur5_arm_ros2 -DCMAKE_INSTALL_PREFIX=/home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm
+[2.097s] Invoking command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm -- -j20 -l20
+[2.136s] Invoked command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm -- -j20 -l20
+[2.147s] Invoking command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm
+[2.154s] -- Install configuration: ""
+[2.154s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//launch
+[2.154s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//launch/ur5_control.launch.py
+[2.154s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf
+[2.154s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes
+[2.154s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e
+[2.154s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual
+[2.154s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/wrist1.dae
+[2.155s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/upperarm.dae
+[2.157s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/base.dae
+[2.157s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/wrist3.dae
+[2.157s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/forearm.dae
+[2.158s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/shoulder.dae
+[2.160s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/visual/wrist2.dae
+[2.161s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision
+[2.161s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/wrist3.stl
+[2.161s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/forearm.stl
+[2.162s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/base.stl
+[2.162s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/upperarm.stl
+[2.162s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/wrist1.stl
+[2.162s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/shoulder.stl
+[2.162s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/ur5e/collision/wrist2.stl
+[2.162s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos
+[2.162s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/CAM_Support2.stl
+[2.162s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/RangeFinder.wbo
+[2.163s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/Table.proto
+[2.163s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/SolidBox.proto
+[2.163s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/RobotiqArg2f140Model.proto
+[2.163s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/meshes/protos/CAM_support.STL
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/ur5.urdf.xacro
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/ur5e.urdf.xacro
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/ur5_arm.ros2_control.xacro
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/ur5e_joint_limited_robot.urdf.xacro
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//urdf/_d435.urdf.xacro
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//config
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//config/ros2_controllers.yaml
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//rviz
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm//rviz/view.rviz
+[2.168s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ament_index/resource_index/package_run_dependencies/ur5_arm
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ament_index/resource_index/parent_prefix_path/ur5_arm
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/environment/ament_prefix_path.sh
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/environment/ament_prefix_path.dsv
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/environment/path.sh
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/environment/path.dsv
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/local_setup.bash
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/local_setup.sh
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/local_setup.zsh
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/local_setup.dsv
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/package.dsv
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ament_index/resource_index/packages/ur5_arm
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/cmake/ur5_armConfig.cmake
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/cmake/ur5_armConfig-version.cmake
+[2.169s] -- Installing: /home/wellington/ws_moveit/src/ur5_arm_ros2/install/ur5_arm/share/ur5_arm/package.xml
+[2.171s] Invoked command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm

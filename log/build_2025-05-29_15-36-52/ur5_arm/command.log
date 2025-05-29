@@ -1,0 +1,4 @@
+Invoking command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm -- -j20 -l20
+Invoked command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm -- -j20 -l20
+Invoking command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm
+Invoked command in '/home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/wellington/ws_moveit/src/ur5_arm_ros2/build/ur5_arm

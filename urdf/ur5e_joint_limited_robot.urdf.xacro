@@ -48,9 +48,9 @@
     <child link="post_grasp_net"/>
   </joint>
 
-  ########################################
+  <!-- ########################################
   # CAN Support code
-  ########################################
+  ######################################## -->
   <link name="webots_tool_link" />
 
   <joint name="webots_tool_joint" type="fixed">
