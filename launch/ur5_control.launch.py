@@ -1,10 +1,9 @@
 import os
 from launch import LaunchDescription
-from launch.substitutions import Command, PathJoinSubstitution
-from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
-from launch.substitutions import FindExecutable
+from launch.substitutions import FindExecutable, Command, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch.actions import DeclareLaunchArgument, RegisterEventHandler
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
@@ -28,6 +27,13 @@ def generate_launch_description():
         "tf_prefix:=''",
     ]),
     value_type=str)
+
+    color_camera_info_file = PathJoinSubstitution([
+        FindPackageShare("ur5_arm"),
+        "config",
+        "color_camera_info.yaml",
+    ])
+
 
     # ToDO: Create a xacro that contains the model and control
 
@@ -62,6 +68,14 @@ def generate_launch_description():
     joint_state_publisher_node = Node(
         package="joint_state_publisher_gui",
         executable="joint_state_publisher_gui",
+    )
+
+    color_camera_info_node = Node(
+        package='rclpy',
+        executable='parameter_event_publisher',
+        name='color_camera_info_loader',
+        parameters=[color_camera_info_file],
+        output='screen'
     )
 
     # ros2_control_node = Node(
@@ -100,6 +114,7 @@ def generate_launch_description():
     return LaunchDescription([
         robot_state_pub_node,
         joint_state_publisher_node,
+        # color_camera_info_node,
         # static_tf,
         # run_move_group_node,
         # ros2_control_node,

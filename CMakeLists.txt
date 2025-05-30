@@ -9,9 +9,9 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ros2_control REQUIRED)
-find_package(gazebo_ros REQUIRED)
+find_package(ros_gz_sim REQUIRED)
 
-install(DIRECTORY launch urdf config rviz
+install(DIRECTORY launch urdf worlds config rviz
   DESTINATION share/${PROJECT_NAME}/
 )
 

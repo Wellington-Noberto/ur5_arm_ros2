@@ -11,7 +11,7 @@
 
   <depend>rclcpp</depend>
   <depend>ros2_control</depend>
-  <depend>gazebo_ros</depend>
+  <depend>ros_gz_sim</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
