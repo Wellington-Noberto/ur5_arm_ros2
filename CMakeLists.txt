@@ -11,7 +11,7 @@ find_package(rclcpp REQUIRED)
 find_package(ros2_control REQUIRED)
 find_package(ros_gz_sim REQUIRED)
 
-install(DIRECTORY launch urdf worlds config rviz
+install(DIRECTORY launch urdf worlds config rviz hooks
   DESTINATION share/${PROJECT_NAME}/
 )
 
@@ -26,5 +26,8 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/gz_sim_resource_path.dsv.in")
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/gz_sim_resource_path.sh.in")
 
 ament_package()

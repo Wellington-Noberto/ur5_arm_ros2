@@ -14,18 +14,6 @@ def generate_launch_description():
         'scene.sdf'
     ])
 
-    ur5_arm_path = FindPackageShare('ur5_arm')
-    set_gz_sim_path = SetEnvironmentVariable(
-        name='GZ_SIM_RESOURCE_PATH',
-        value=PathJoinSubstitution([ur5_arm_path])
-    )
-
-    gz_launch_file = PathJoinSubstitution([
-        FindPackageShare('ros_gz_sim'),
-        'launch',
-        'gz_sim.launch.py'
-    ])
-
     gz_launch_file = PathJoinSubstitution([
         FindPackageShare('ros_gz_sim'),
         'launch',
@@ -33,7 +21,6 @@ def generate_launch_description():
     ])
 
     return LaunchDescription([
-        set_gz_sim_path,
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(gz_launch_file),
             launch_arguments={'gz_args': [worlds_path, ' -r']}.items()
