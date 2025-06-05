@@ -7,45 +7,143 @@ from launch_ros.substitutions import FindPackageShare
 from launch.actions import DeclareLaunchArgument, RegisterEventHandler
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
+from ur_moveit_config.launch_common import load_yaml
+
 
 
 def generate_launch_description():
     # Get URDF via xacro
-    robot_description = ParameterValue(Command([
-        PathJoinSubstitution([FindExecutable(name="xacro")]),
-        " ",
-        PathJoinSubstitution([
-            FindPackageShare("ur5_arm"),
-            "urdf",
-            "ur5e_joint_limited_robot.urdf.xacro"
-        ]),
-        " ",
-        "name:=ur",
-        " ",
-        "ur_type:=ur5e",
-        " ",
-        "tf_prefix:=''",
-    ]),
-    value_type=str)
 
-    color_camera_info_file = PathJoinSubstitution([
-        FindPackageShare("ur5_arm"),
-        "config",
-        "color_camera_info.yaml",
-    ])
+    moveit_package = "ur5_weaver"
+    description_package = "ur_description"
+    ur_type = "ur5e"
+    description_file = "ur.urdf.xacro"
+    moveit_config_file = "ur.srdf.xacro"
+    prefix = ""
+    _publish_robot_description_semantic = True
 
+    joint_limit_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", ur_type, "joint_limits.yaml"]
+    )
+    kinematics_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", ur_type, "default_kinematics.yaml"]
+    )
+    physical_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", ur_type, "physical_parameters.yaml"]
+    )
+    visual_params = PathJoinSubstitution(
+        [FindPackageShare(description_package), "config", ur_type, "visual_parameters.yaml"]
+    )
 
-    # ToDO: Create a xacro that contains the model and control
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution([FindPackageShare(description_package), "urdf", description_file]),
+            " ",
+            "joint_limit_params:=",
+            joint_limit_params,
+            " ",
+            "kinematics_params:=",
+            kinematics_params,
+            " ",
+            "physical_params:=",
+            physical_params,
+            " ",
+            "visual_params:=",
+            visual_params,
+            " ",
+            "safety_limits:=",
+            "true",
+            " ",
+            "name:=",
+            "ur",
+            " ",
+            "ur_type:=",
+            ur_type,
+            " ",
+            "prefix:=",
+            prefix,
+            " ",
+        ]
+    )
+    robot_description = {"robot_description": robot_description_content}
 
-    robot_controllers = PathJoinSubstitution([
-        FindPackageShare("ur5_arm"),
-        "config",
-        "ros2_controllers.yaml",
-    ])
+    # MoveIt Configuration
+    robot_description_semantic_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution(
+                [FindPackageShare(moveit_package), "urdf", moveit_config_file]
+            ),
+            " ",
+            "name:=",
+            # Also ur_type parameter could be used but then the planning group names in yaml
+            # configs has to be updated!
+            "ur",
+            " ",
+            "prefix:=",
+            prefix,
+            " ",
+        ]
+    )
+    robot_description_semantic = {"robot_description_semantic": robot_description_semantic_content}
+
+    publish_robot_description_semantic = {
+        "publish_robot_description_semantic": _publish_robot_description_semantic
+    }
+
+    robot_description_kinematics = PathJoinSubstitution(
+        [FindPackageShare(moveit_package), "config", "kinematics.yaml"]
+    )
+
+    robot_description_planning = {
+        "robot_description_planning": load_yaml(
+            moveit_package,
+            os.path.join("config", "joint_limits.yaml"),
+        )
+    }
+
+    # Controllers
+    controllers_yaml = load_yaml("ur_moveit_config", "config/controllers.yaml")
+
+    moveit_controllers = {
+        "moveit_simple_controller_manager": controllers_yaml,
+        "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager",
+    }
+
+    # Parameters
+    planning_scene_monitor_parameters = {
+        "publish_planning_scene": True,
+        "publish_geometry_updates": True,
+        "publish_state_updates": True,
+        "publish_transforms_updates": True,
+    }
+
+    # Start the actual move_group node/action server
+    move_group_node = Node(
+        package="moveit_ros_move_group",
+        executable="move_group",
+        output="screen",
+        parameters=[
+            robot_description,
+            robot_description_semantic,
+            publish_robot_description_semantic,
+            robot_description_kinematics,
+            robot_description_planning,
+            # ompl_planning_pipeline_config,
+            # trajectory_execution,
+            moveit_controllers,
+            planning_scene_monitor_parameters,
+            # {"use_sim_time": use_sim_time}
+        ],
+    )
+
 
     # RViz
     rviz_config_file = PathJoinSubstitution([
-        FindPackageShare("ur5_arm"),
+        FindPackageShare("ur5_weaver"),
         "rviz",
         "view.rviz"
     ])
@@ -62,7 +160,7 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[{"robot_description": robot_description}],
+        parameters=[robot_description],
     )
 
     joint_state_publisher_node = Node(
@@ -70,13 +168,6 @@ def generate_launch_description():
         executable="joint_state_publisher_gui",
     )
 
-    color_camera_info_node = Node(
-        package='rclpy',
-        executable='parameter_event_publisher',
-        name='color_camera_info_loader',
-        parameters=[color_camera_info_file],
-        output='screen'
-    )
 
     # ros2_control_node = Node(
 	# 	package="controller_manager",
@@ -85,17 +176,6 @@ def generate_launch_description():
 	# 	output="both",
     # )
 
-    arm_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["ur5_arm_controller", "--param-file", robot_controllers],
-    )
-
-    gripper_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["robotiq_gripper_controller", "--param-file", robot_controllers],
-    )
 
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
@@ -104,16 +184,11 @@ def generate_launch_description():
         output="screen",
     )
 
-    delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=arm_controller_spawner,
-            on_exit=[joint_state_broadcaster_spawner],
-        )
-    )
 
     return LaunchDescription([
         robot_state_pub_node,
         joint_state_publisher_node,
+        move_group_node,
         # color_camera_info_node,
         # static_tf,
         # run_move_group_node,
