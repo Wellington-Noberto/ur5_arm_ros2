@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="ur5e" >
 
+  <xacro:arg name="use_nominal_extrinsics" default="false"/>
+  <xacro:arg name="add_plug" default="true" />
+  <xacro:arg name="use_mesh" default="true" />
+
   <!-- ur5e -->
   <xacro:include filename="$(find ur5_arm)/urdf/ur5e.urdf.xacro" />
 
