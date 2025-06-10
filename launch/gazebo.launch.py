@@ -9,7 +9,7 @@ import os
 
 def generate_launch_description():
     worlds_path = PathJoinSubstitution([
-        FindPackageShare('ur5_arm'),
+        FindPackageShare('ur5_weaver'),
         'worlds',
         'scene.sdf'
     ])

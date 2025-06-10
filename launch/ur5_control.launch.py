@@ -1,10 +1,11 @@
 import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.parameter_descriptions import ParameterFile, ParameterValue
 from launch.substitutions import FindExecutable, Command, PathJoinSubstitution, LaunchConfiguration
 from launch_ros.substitutions import FindPackageShare
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
 from ur_moveit_config.launch_common import load_yaml
@@ -232,6 +233,23 @@ def generate_launch_description():
         output="screen",
     )
 
+    ### Gazebo
+
+    gazzz = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=['-name', 'ur5_weaver', '-topic', 'robot_description'],
+        output='screen'
+    )
+
+    gazebo_launch = PathJoinSubstitution([
+        FindPackageShare('ur5_weaver'),
+        'launch',
+        'gazebo.launch.py'
+    ])
+
+
+    ###
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=ur_controller_spawner,
@@ -255,9 +273,12 @@ def generate_launch_description():
     return LaunchDescription(
         declared_arguments + [
         robot_state_pub_node,
-        # move_group_node,
+        move_group_node,
         control_node,
         ur_controller_spawner,
+        gazzz,
+        IncludeLaunchDescription(PythonLaunchDescriptionSource(gazebo_launch)),
+
         # color_camera_info_node,
         # static_tf,
         # run_move_group_node,
