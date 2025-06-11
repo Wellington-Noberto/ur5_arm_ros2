@@ -26,7 +26,9 @@
     <ros2_control name="${name}" type="system">
       <hardware>
         <xacro:if value="${sim_gazebo}">
-          <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        <gazebo>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </gazebo>
         </xacro:if>
         <xacro:if value="${sim_ignition}">
           <plugin>ign_ros2_control/IgnitionSystem</plugin>
