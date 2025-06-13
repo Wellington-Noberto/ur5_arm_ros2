@@ -1,0 +1,1 @@
+ament_prepend_unique_value GZ_SIM_RESOURCE_PATH "/opt/ros/humble/share/ur_description/meshes"
