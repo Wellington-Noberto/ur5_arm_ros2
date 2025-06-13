@@ -3,7 +3,7 @@
    <!-- robot name parameter -->
    <xacro:arg name="name" default="ur"/>
    <!-- import main macro -->
-   <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+   <xacro:include filename="$(find ur5_weaver)/urdf/ur_macro.urdf.xacro"/>
 
    <!-- possible 'ur_type' values: ur3, ur3e, ur5, ur5e, ur7e, ur10, ur10e, ur12e, ur16e, ur15, ur20, ur30 -->
    <!-- the default value should raise an error in case this was called without defining the type -->
@@ -131,10 +131,8 @@
     <gazebo reference="world">
     </gazebo>
     <gazebo>
-       <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
         <parameters>$(find ur5_weaver)/config/ur_controllers.yaml</parameters>
-        <robot_param>robot_description</robot_param>
-        <robot_param_node>robot_state_publisher</robot_param_node>
       </plugin>
     </gazebo>
   </xacro:if>
@@ -145,7 +143,7 @@
     </gazebo>
     <gazebo>
       <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-        <parameters>$(find ur5_weaver)/config/ur_controllers.yaml</parameters>
+        <parameters>$(arg simulation_controllers)</parameters>
         <controller_manager_node_name>$(arg tf_prefix)controller_manager</controller_manager_node_name>
       </plugin>
     </gazebo>
