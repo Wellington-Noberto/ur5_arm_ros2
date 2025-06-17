@@ -23,34 +23,38 @@ def generate_launch_description():
     description_file = "ur.urdf.xacro"
     moveit_config_file = "ur.srdf.xacro"
     controllers_file = "ur_controllers.yaml"
+    world_file = "scene.sdf"
     tf_prefix = LaunchConfiguration("tf_prefix")
 
     _publish_robot_description_semantic = True
 
 
-    robot_description_content = Command(
-        [
-            PathJoinSubstitution([FindExecutable(name="xacro")]),
-            " ",
-            PathJoinSubstitution([FindPackageShare(package_name), "urdf", description_file]),
-            " ",
-            "name:=",
-            "ur",
-            " ",
-            "ur_type:=",
-            ur_type,
-            " ",
-            "tf_prefix:=",
-            "",
-            " ",
-            "use_fake_hardware:=",
-            "true",
-            " ",
-            "sim_gazebo:=",
-            "true",
-            " ",
+    robot_description_content = ParameterValue(
+        Command(
+            [
+                PathJoinSubstitution([FindExecutable(name="xacro")]),
+                " ",
+                PathJoinSubstitution([FindPackageShare(package_name), "urdf", description_file]),
+                " ",
+                "name:=",
+                "ur",
+                " ",
+                "ur_type:=",
+                ur_type,
+                " ",
+                "tf_prefix:=",
+                "",
+                " ",
+                "use_fake_hardware:=",
+                "true",
+                " ",
+                "sim_gazebo:=",
+                "true",
+                " ",
 
-        ]
+            ]
+        ),
+        value_type=str
     )
     robot_description = {"robot_description": robot_description_content}
 
@@ -109,12 +113,19 @@ def generate_launch_description():
     )
 
     # Gazebo nodes
+
+    world_config_file = PathJoinSubstitution([
+        FindPackageShare("ur5_weaver"),
+        "worlds",
+        "scene.sdf"
+    ])
+
     gazebo = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [PathJoinSubstitution([FindPackageShare('ros_gz_sim'),
                                        'launch',
                                        'gz_sim.launch.py'])]),
-            launch_arguments=[('gz_args', [' -r -v 1 empty.sdf'])]
+            launch_arguments=[('gz_args', [' -r -v 1 ', world_config_file])],
     )
 
 
@@ -125,6 +136,33 @@ def generate_launch_description():
         arguments=['-name', 'ur', '-topic', 'robot_description'],
         output='screen'
     )
+
+    ## Gazebo Bridge
+    bridge_config_path = PathJoinSubstitution([
+        FindPackageShare(package_name),
+        "config",
+        "gz_bridge.yaml"
+    ])
+
+    gz_parameters_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='parameter_bridge',
+        output='screen',
+        arguments=[
+            '--ros-args',
+            '-p', ['config_file:=', bridge_config_path]
+        ]
+    )
+
+    gz_camera_bridge = Node(
+        package='ros_gz_image',
+        executable='image_bridge',
+        name='image_bridge',
+        output='screen',
+        arguments=['/camera/image_raw']
+    )
+
 
 
     ###
@@ -158,6 +196,8 @@ def generate_launch_description():
 
         # static_tf,
         rviz_node,
-        delay_joint_state_broadcaster_after_robot_controller_spawner
+        delay_joint_state_broadcaster_after_robot_controller_spawner,
+        gz_parameters_bridge,
+        # gz_camera_bridge
     ])
     # + load_controllers
