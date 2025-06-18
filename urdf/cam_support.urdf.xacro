@@ -71,8 +71,9 @@
 
 
   <link name="camera_ros_link" />
+
   <joint name="camera_ros_joint" type="fixed">
-    <origin rpy="0 3.14 3.14" xyz="0 0 0"/>
+    <origin rpy="0 1.570796 3.14159" xyz="0 0 0"/>
     <parent link="camera_gz_link"/>
     <child link="camera_ros_link"/>
   </joint>
