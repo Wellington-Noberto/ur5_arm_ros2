@@ -19,15 +19,28 @@ def generate_launch_description():
 
     package_name = "ur5_weaver"
     runtime_config_package = "ur_robot_driver"
+    ur_description_config_package = "ur_description"
     ur_type = "ur5e"
     description_file = "ur.urdf.xacro"
     moveit_config_file = "ur.srdf.xacro"
     controllers_file = "ur_controllers.yaml"
     world_file = "scene.sdf"
     tf_prefix = LaunchConfiguration("tf_prefix")
-
+    use_sim_time = True
     _publish_robot_description_semantic = True
 
+    joint_limit_params = PathJoinSubstitution(
+        [FindPackageShare(ur_description_config_package), "config", ur_type, "joint_limits.yaml"]
+    )
+    kinematics_params = PathJoinSubstitution(
+        [FindPackageShare(ur_description_config_package), "config", ur_type, "default_kinematics.yaml"]
+    )
+    physical_params = PathJoinSubstitution(
+        [FindPackageShare(ur_description_config_package), "config", ur_type, "physical_parameters.yaml"]
+    )
+    visual_params = PathJoinSubstitution(
+        [FindPackageShare(ur_description_config_package), "config", ur_type, "visual_parameters.yaml"]
+    )
 
     robot_description_content = ParameterValue(
         Command(
@@ -51,6 +64,19 @@ def generate_launch_description():
                 "sim_gazebo:=",
                 "true",
                 " ",
+                "joint_limit_params:=",
+                joint_limit_params,
+                " ",
+                "kinematics_params:=",
+                kinematics_params,
+                " ",
+                "physical_params:=",
+                physical_params,
+                " ",
+                "visual_params:=",
+                visual_params,
+                " ",
+
 
             ]
         ),
@@ -58,6 +84,36 @@ def generate_launch_description():
     )
     robot_description = {"robot_description": robot_description_content}
 
+    # MoveIt Configuration
+    robot_description_semantic_content = ParameterValue(
+        Command(
+            [
+                PathJoinSubstitution([FindExecutable(name="xacro")]),
+                " ",
+                PathJoinSubstitution(
+                    [FindPackageShare(package_name), "urdf", moveit_config_file]
+                ),
+                " ",
+                "name:=",
+                "ur",
+                " ",
+                "prefix:=",
+                "",
+                " ",
+            ]
+        ),
+        value_type=str
+    )
+
+    robot_description_semantic = {"robot_description_semantic": robot_description_semantic_content}
+
+    robot_description_kinematics = PathJoinSubstitution(
+        [FindPackageShare(package_name), "config", "kinematics.yaml"]
+    )
+
+    publish_robot_description_semantic = {
+        "publish_robot_description_semantic": _publish_robot_description_semantic
+    }
 
     # controllers_path = PathJoinSubstitution([
     #     FindPackageShare(package_name),
@@ -65,7 +121,86 @@ def generate_launch_description():
     #     "ur_controllers.yaml"
     # ])
 
+    robot_description_planning = {
+        "robot_description_planning": load_yaml(
+            package_name,
+            os.path.join("config", "joint_limits.yaml"),
+        )
+    }
 
+
+    # Planning Configuration
+    ompl_planning_pipeline_config = {
+        "ompl": {
+            "planning_plugin": "ompl_interface/OMPLPlanner",
+            "request_adapters": """default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints""",
+            "start_state_max_bounds_error": 0.1,
+        }
+    }
+
+    ompl_planning_yaml = load_yaml("ur_moveit_config", "config/ompl_planning.yaml")
+    ompl_planning_pipeline_config["ompl"].update(ompl_planning_yaml)
+
+    # Trajectory Execution Configuration
+    controllers_yaml = load_yaml(package_name, "config/controllers.yaml")
+    # the scaled_joint_trajectory_controller does not work on fake hardware
+    # change_controllers = "true"
+    # if change_controllers == "true":
+    #     controllers_yaml["scaled_joint_trajectory_controller"]["default"] = False
+    #     controllers_yaml["joint_trajectory_controller"]["default"] = True
+
+    moveit_controllers = {
+        "moveit_simple_controller_manager": controllers_yaml,
+        "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager",
+    }
+
+    trajectory_execution = {
+        "moveit_manage_controllers": True,
+        "trajectory_execution.allowed_execution_duration_scaling": 1.2,
+        "trajectory_execution.allowed_goal_duration_margin": 0.5,
+        "trajectory_execution.allowed_start_tolerance": 0.01,
+        # Execution time monitoring can be incompatible with the scaled JTC
+        "trajectory_execution.execution_duration_monitoring": False,
+    }
+
+    planning_scene_monitor_parameters = {
+        "publish_planning_scene": True,
+        "publish_geometry_updates": True,
+        "publish_state_updates": True,
+        "publish_transforms_updates": True,
+    }
+
+    # moveit_config = (
+    #     MoveItConfigsBuilder(package_name)
+    #     .robot_description(file_path="config/ur.urdf.xacro")
+    #     .robot_description_semantic(file_path="config/panda.srdf")
+    #     .trajectory_execution(file_path="config/moveit_controllers.yaml")
+    #     .planning_pipelines(pipelines=["ompl"])
+    #     .to_moveit_configs()
+    # )
+
+
+
+    # Start the actual move_group node/action server
+    move_group_node = Node(
+        package="moveit_ros_move_group",
+        executable="move_group",
+        output="screen",
+        parameters=[
+            robot_description,
+            robot_description_semantic,
+            publish_robot_description_semantic,
+            robot_description_kinematics,
+            robot_description_planning,
+            ompl_planning_pipeline_config,
+            trajectory_execution,
+            moveit_controllers,
+            planning_scene_monitor_parameters,
+            {"planning_pipelines": ["ompl"]},
+            {"ompl.planning_plugins": ["ompl_interface/OMPLPlanner"]},
+            {"use_sim_time": use_sim_time},
+        ],
+    )
 
     # RViz
     rviz_config_file = PathJoinSubstitution([
@@ -82,10 +217,13 @@ def generate_launch_description():
         arguments=["-d", rviz_config_file],
         parameters=[
             robot_description,
-            # robot_description_semantic,
-            # ompl_planning_pipeline_config,
-            # robot_description_kinematics,
-            # robot_description_planning
+            robot_description_semantic,
+            ompl_planning_pipeline_config,
+            robot_description_kinematics,
+            robot_description_planning,
+            moveit_controllers,
+            {"planning_pipelines": ["ompl"]},
+            {"use_sim_time": use_sim_time}
         ]
     )
 
@@ -97,7 +235,7 @@ def generate_launch_description():
     )
 
 
-    # Controllers
+    ### Controllers
     ur_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -112,7 +250,7 @@ def generate_launch_description():
         ,
     )
 
-    # Gazebo nodes
+    ### Gazebo nodes
 
     world_config_file = PathJoinSubstitution([
         FindPackageShare("ur5_weaver"),
@@ -137,7 +275,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    ## Gazebo Bridge
+    # Gazebo Bridge
     bridge_config_path = PathJoinSubstitution([
         FindPackageShare(package_name),
         "config",
@@ -154,15 +292,6 @@ def generate_launch_description():
             '-p', ['config_file:=', bridge_config_path]
         ]
     )
-
-    gz_camera_bridge = Node(
-        package='ros_gz_image',
-        executable='image_bridge',
-        name='image_bridge',
-        output='screen',
-        arguments=['/camera/image_raw']
-    )
-
 
 
     ###
@@ -189,7 +318,7 @@ def generate_launch_description():
     return LaunchDescription(
         declared_arguments + [
         robot_state_pub_node,
-        # move_group_node,
+        move_group_node,
         ur_controller_spawner,
         gazebo,
         gazebo_spawn_robot,
@@ -197,7 +326,7 @@ def generate_launch_description():
         # static_tf,
         rviz_node,
         delay_joint_state_broadcaster_after_robot_controller_spawner,
-        gz_parameters_bridge,
-        # gz_camera_bridge
+        # joint_state_broadcaster_spawner,
+        gz_parameters_bridge
     ])
     # + load_controllers

@@ -1,6 +1,6 @@
 - topic_name: /camera
   ros_type_name: sensor_msgs/msg/Image
-  ign_type_name: ignition.msgs.Image
+  gz_type_name: ignition.msgs.Image
 - topic_name: /camera_info
   ros_type_name: sensor_msgs/msg/CameraInfo
-  ign_type_name: ignition.msgs.CameraInfo
+  gz_type_name: ignition.msgs.CameraInfo

@@ -10,9 +10,30 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ros2_control REQUIRED)
 find_package(ros_gz_sim REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(moveit_ros_planning REQUIRED)
+find_package(moveit_ros_planning_interface REQUIRED)
+find_package(moveit_visual_tools REQUIRED)
 
-install(DIRECTORY launch urdf worlds config rviz hooks meshes
+add_executable(motion_planning_api_tutorial
+    src/motion_planning.cpp)
+
+install(DIRECTORY launch urdf worlds config rviz hooks meshes src
   DESTINATION share/${PROJECT_NAME}/
+)
+
+install(TARGETS motion_planning_api_tutorial
+  DESTINATION lib/${PROJECT_NAME})
+
+
+ament_target_dependencies(motion_planning_api_tutorial
+  rclcpp
+  pluginlib
+  ros2_control
+  ros_gz_sim
+  moveit_ros_planning
+  moveit_ros_planning_interface
+  moveit_visual_tools
 )
 
 if(BUILD_TESTING)
