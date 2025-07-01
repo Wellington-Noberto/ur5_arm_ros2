@@ -1,3 +1,5 @@
+<?xml version="1.0"?>
+
 <sdf version='1.9'>
   <world name='empty'>
     <physics name='1ms' type='ignored'>
@@ -20,6 +22,44 @@
       <background>0.7 0.7 0.7 1</background>
       <shadows>true</shadows>
     </scene>
+
+
+    <model name='lar_floor'>
+      <pose>0 -0.25 0 0 -0 0</pose>
+      <include>
+        <uri> model://ur5_weaver/meshes/models/lar_floor</uri>
+        <name> floor </name>
+        <static>1</static>
+      </include>
+    </model>
+
+    <model name='lar_walls'>
+      <pose>0 1 0 0 0 0</pose>
+      <include>
+        <uri> model://ur5_weaver/meshes/models/lar_walls</uri>
+        <name> walls </name>
+        <static>1</static>
+      </include>
+    </model>
+
+    <model name='lar_table_great_0'>
+      <pose>1.9 -2.0 0 0 0 0</pose>
+      <include>
+        <uri> model://ur5_weaver/meshes/models/lar_table_great</uri>
+        <name> great_table_0 </name>
+        <static>1</static>
+      </include>
+    </model>
+
+    <model name='lar_table_great_1'>
+      <pose frame=''>-0.55 5.15 0 0 -0 1.5708</pose>
+      <include>
+        <uri> model://ur5_weaver/meshes/models/lar_table_great</uri>
+        <name> great_table_1 </name>
+        <static>1</static>
+      </include>
+    </model>
+
     <model name='ground_plane'>
       <static>true</static>
       <link name='link'>
@@ -70,110 +110,20 @@
       <self_collide>false</self_collide>
     </model>
 
-    <model name="simple_room">
-  <static>true</static>
-  <pose>0 0 0 0 0 0</pose>
 
-  <!-- Floor -->
-  <link name="floor">
-    <collision name="collision">
-      <geometry>
-        <box>
-          <size>6 6 0.1</size>
-        </box>
-      </geometry>
-    </collision>
-    <visual name="visual">
-      <geometry>
-        <box>
-          <size>6 6 0.1</size>
-        </box>
-      </geometry>
-      <material>
-        <ambient>0.6 0.6 0.6 1</ambient>
-        <diffuse>0.6 0.6 0.6 1</diffuse>
-      </material>
-    </visual>
-  </link>
+  <!-- <state world_name='default'>
 
-  <!-- Four walls -->
-  <!-- Front wall -->
-  <link name="wall_front">
-    <pose>0 3 1.25 0 0 0</pose>
-    <collision name="collision">
-      <geometry>
-        <box>
-          <size>6 0.1 2.5</size>
-        </box>
-      </geometry>
-    </collision>
-    <visual name="visual">
-      <geometry>
-        <box>
-          <size>6 0.1 2.5</size>
-        </box>
-      </geometry>
-    </visual>
-  </link>
-
-  <!-- Back wall -->
-  <link name="wall_back">
-    <pose>0 -3 1.25 0 0 0</pose>
-    <collision name="collision">
-      <geometry>
-        <box>
-          <size>6 0.1 2.5</size>
-        </box>
-      </geometry>
-    </collision>
-    <visual name="visual">
-      <geometry>
-        <box>
-          <size>6 0.1 2.5</size>
-        </box>
-      </geometry>
-    </visual>
-  </link>
-
-  <!-- Left wall -->
-  <link name="wall_left">
-    <pose>-3 0 1.25 0 0 0</pose>
-    <collision name="collision">
-      <geometry>
-        <box>
-          <size>0.1 6 2.5</size>
-        </box>
-      </geometry>
-    </collision>
-    <visual name="visual">
-      <geometry>
-        <box>
-          <size>0.1 6 2.5</size>
-        </box>
-      </geometry>
-    </visual>
-  </link>
-
-  <!-- Right wall -->
-  <link name="wall_right">
-    <pose>3 0 1.25 0 0 0</pose>
-    <collision name="collision">
-      <geometry>
-        <box>
-          <size>0.1 6 2.5</size>
-        </box>
-      </geometry>
-    </collision>
-    <visual name="visual">
-      <geometry>
-        <box>
-          <size>0.1 6 2.5</size>
-        </box>
-      </geometry>
-    </visual>
-  </link>
-
-</model>
+    <model name='lar_table_great_0'>
+          <pose frame=''>4 -2.0 0 0 0 0</pose>
+          <scale>1 1 1</scale>
+          <link name='link'>
+            <pose frame=''>1.9 -3.0 0 0 0 0</pose>
+            <velocity>0 0 0 0 -0 0</velocity>
+            <acceleration>0 0 0 0 -0 0</acceleration>
+            <wrench>0 0 0 0 -0 0</wrench>
+          </link>
+    </model>
+  </state> -->
 
 
     <light name='sun' type='directional'>

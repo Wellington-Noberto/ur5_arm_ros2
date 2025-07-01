@@ -271,7 +271,11 @@ def generate_launch_description():
     gazebo_spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
-        arguments=['-name', 'ur', '-topic', 'robot_description'],
+        arguments=['-name', 'ur', '-topic', 'robot_description',
+            '-x', '1.9',                   # Desired X position
+            '-y', '-2.0',                  # Desired Y position
+            '-z', '0.85',                  # Desired Z position
+            '-Y', '0.0'],
         output='screen'
     )
 
