@@ -22,6 +22,8 @@
   <depend>moveit_ros_planning_interface</depend>
   <depend>rviz2</depend>
   <depend>pluginlib</depend>
+  <depend>cv_bridge</depend>
+  <depend>apriltag</depend>
 
 
   <test_depend>ament_lint_auto</test_depend>

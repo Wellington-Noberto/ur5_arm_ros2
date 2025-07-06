@@ -60,13 +60,11 @@
       </include>
     </model>
 
-    <model name="apriltag_0">
-      <pose>1.9 -1.3 0.87 0 0 1.57</pose>
     <include>
+      <pose>1.9 -1.3 0.87 0 0 1.57</pose>
       <uri>model://ur5_weaver/meshes/models/apriltags</uri>
       <name>apriltag_0</name>
     </include>
-  </model>
 
     <model name='ground_plane'>
       <static>true</static>

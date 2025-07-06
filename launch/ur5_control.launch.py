@@ -202,9 +202,23 @@ def generate_launch_description():
         ],
     )
 
+    marker_detector_config_file = PathJoinSubstitution([
+        FindPackageShare(package_name),
+        "config",
+        "marker_detector.yaml"
+    ])
+
+    # Apriltag detection
+    marker_detector_node = Node(
+        package=package_name,
+        executable="marker_detector",
+        output="both",
+        parameters=[marker_detector_config_file],
+    )
+
     # RViz
     rviz_config_file = PathJoinSubstitution([
-        FindPackageShare("ur5_weaver"),
+        FindPackageShare(package_name),
         "rviz",
         "view.rviz"
     ])
@@ -231,7 +245,8 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[robot_description],
+        parameters=[robot_description,
+                ],
     )
 
 
@@ -240,6 +255,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["joint_trajectory_controller", "-c", "/controller_manager"],
+        # parameters=[{"use_sim_time": use_sim_time}],
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -265,7 +281,6 @@ def generate_launch_description():
                                        'gz_sim.launch.py'])]),
             launch_arguments=[('gz_args', [' -r -v 1 ', world_config_file])],
     )
-
 
     # Spawn robot
     gazebo_spawn_robot = Node(
@@ -323,14 +338,15 @@ def generate_launch_description():
         declared_arguments + [
         robot_state_pub_node,
         move_group_node,
+        marker_detector_node,
         ur_controller_spawner,
         gazebo,
         gazebo_spawn_robot,
 
         # static_tf,
+        gz_parameters_bridge,
         rviz_node,
         delay_joint_state_broadcaster_after_robot_controller_spawner,
         # joint_state_broadcaster_spawner,
-        gz_parameters_bridge
     ])
     # + load_controllers
