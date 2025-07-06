@@ -10,10 +10,60 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ros2_control REQUIRED)
 find_package(ros_gz_sim REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(moveit_ros_planning REQUIRED)
+find_package(moveit_ros_planning_interface REQUIRED)
+find_package(moveit_visual_tools REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(apriltag REQUIRED)
+find_package(tf2_ros REQUIRED)
 
-install(DIRECTORY launch urdf worlds config rviz hooks
+add_executable(motion_planning_api_tutorial
+    src/motion_planning.cpp)
+add_executable(marker_detector
+    src/marker_detector.cpp)
+  add_executable(pose_evaluator
+    src/pose_evaluator.cpp)
+
+ament_target_dependencies(motion_planning_api_tutorial
+  rclcpp
+  pluginlib
+  ros2_control
+  ros_gz_sim
+  moveit_ros_planning
+  moveit_ros_planning_interface
+  moveit_visual_tools
+)
+
+ament_target_dependencies(marker_detector
+  rclcpp
+  sensor_msgs
+  std_msgs
+  cv_bridge
+  OpenCV
+  apriltag
+  tf2_ros
+)
+
+ament_target_dependencies(pose_evaluator
+  rclcpp
+  tf2_ros
+)
+
+target_link_libraries(marker_detector
+  apriltag
+)
+
+install(DIRECTORY launch urdf worlds config rviz hooks meshes src
   DESTINATION share/${PROJECT_NAME}/
 )
+
+install(TARGETS
+  motion_planning_api_tutorial
+  marker_detector
+  pose_evaluator
+  DESTINATION lib/${PROJECT_NAME})
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
