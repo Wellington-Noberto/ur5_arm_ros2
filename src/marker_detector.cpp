@@ -6,37 +6,43 @@
 #include <apriltag/apriltag.h>
 #include <apriltag_pose.h>
 #include <apriltag/tag36h11.h>
-#include <eigen3/Eigen/Eigen>
+#include <tf2_eigen/tf2_eigen.hpp>
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 #include "tf2_ros/transform_broadcaster.h"
 
 
 #include <sstream>
 #include <memory>
 
-class AprilTagDetectorNode : public rclcpp::Node {
+class MarkerDetectorNode : public rclcpp::Node {
 public:
-AprilTagDetectorNode() :
+MarkerDetectorNode() :
         Node("marker_detector"),
-        tf_broadcaster_(this)
-     {
+        tf_broadcaster_(this),
+        tf_buffer_(this->get_clock()),
+        tf_listener_(tf_buffer_)
+{
         // Image subscriber
         image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
             "/camera", 10,
-            std::bind(&AprilTagDetectorNode::image_callback, this, std::placeholders::_1));
+            std::bind(&MarkerDetectorNode::image_callback, this, std::placeholders::_1));
 
         image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("img_markers", 10);
 
         // Detection publisher
         detection_pub_ = this->create_publisher<std_msgs::msg::String>("apriltag_detections", 10);
 
-        this->declare_parameter<std::string>("frame_id", "camera_frame");
+        this->declare_parameter<std::string>("camera_frame_id", "camera_ros_link");
+        this->declare_parameter<std::string>("tool_frame_id", "tool0");
         this->declare_parameter<double>("tag_size", 0.1);
         this->declare_parameter<double>("fx", 0.0);
         this->declare_parameter<double>("fy", 0.0);
         this->declare_parameter<double>("cx", 0.0);
         this->declare_parameter<double>("cy", 0.0);
 
-        this->get_parameter("frame_id", frame_id_);
+        this->get_parameter("camera_frame_id", camera_frame_id_);
+        this->get_parameter("tool_frame_id", tool_frame_id_);
         this->get_parameter("tag_size", tag_size_);
         this->get_parameter("fx", fx_);
         this->get_parameter("fy", fy_);
@@ -51,13 +57,13 @@ AprilTagDetectorNode() :
         RCLCPP_INFO(this->get_logger(), "AprilTag detector node started.");
     }
 
-    ~AprilTagDetectorNode() {
+    ~MarkerDetectorNode() {
         apriltag_detector_destroy(td_);
         tag36h11_destroy(tf_);
     }
 
 private:
-    void publish_debug_image(const cv::Mat& image, const std::string& frame_id = "camera_frame")
+    void publish_debug_image(const cv::Mat& image, const std::string& frame_id)
     {
         std_msgs::msg::Header header;
         header.stamp = this->now();
@@ -93,19 +99,6 @@ private:
 
             publish_tag_tf(pose, det->id);
 
-            // Print 3D pose
-            std::cout << "Translation (x,y,z): "
-            << pose.t->data[0] << ", "
-            << pose.t->data[1] << ", "
-            << pose.t->data[2] << std::endl;
-
-            std::cout << "Rotation matrix:" << std::endl;
-            for (int i = 0; i < 3; ++i) {
-                std::cout << pose.R->data[i * 3 + 0] << " "
-                << pose.R->data[i * 3 + 1] << " "
-                << pose.R->data[i * 3 + 2] << std::endl;
-            }
-
             cv::Mat camera_matrix = (cv::Mat_<double>(3, 3) <<
                 fx_, 0, cx_,
                 0, fy_, cy_,
@@ -127,7 +120,7 @@ private:
         geometry_msgs::msg::TransformStamped transform;
 
         transform.header.stamp = this->get_clock()->now();
-        transform.header.frame_id = frame_id_;  // Change if your base frame differs
+        transform.header.frame_id = camera_frame_id_;
         transform.child_frame_id = "apriltag_" + std::to_string(tag_id);
 
         // Translation
@@ -153,8 +146,49 @@ private:
         transform.transform.rotation.z = q.z();
         transform.transform.rotation.w = q.w();
 
-        // Publish
+        // Publish Camera to Apriltag transform
         tf_broadcaster_.sendTransform(transform);
+
+        // Publish Tool to apriltag transform
+        const Eigen::Quaterniond optical_to_camera =
+            Eigen::AngleAxisd(-M_PI_2, Eigen::Vector3d::UnitY())
+            * Eigen::AngleAxisd(M_PI_2, Eigen::Vector3d::UnitX());
+
+
+        // Get the transformation from camera to tool
+        geometry_msgs::msg::TransformStamped tool_camera_ts = tf_buffer_.lookupTransform(
+                tool_frame_id_, camera_frame_id_, tf2::TimePointZero);
+
+        Eigen::Affine3d tool_apriltag_transformation = Eigen::Affine3d::Identity();
+        Eigen::Affine3d tool_camera_transformation = tf2::transformToEigen(tool_camera_ts);
+        Eigen::Affine3d camera_apriltag_transformation = tf2::transformToEigen(transform);
+
+        camera_apriltag_transformation.prerotate(optical_to_camera);
+        camera_apriltag_transformation.rotate(optical_to_camera);
+
+        tool_apriltag_transformation = tool_camera_transformation * camera_apriltag_transformation;
+
+        geometry_msgs::msg::TransformStamped tool_apriltag_msg = tf2::eigenToTransform(tool_apriltag_transformation);
+
+        tool_apriltag_msg.header.stamp = this->get_clock()->now();
+        tool_apriltag_msg.header.frame_id = tool_frame_id_;
+        tool_apriltag_msg.child_frame_id = "apriltag_" + std::to_string(tag_id);
+
+        // Publish Tool to Apriltag transform
+        tf_broadcaster_.sendTransform(tool_apriltag_msg);
+
+        RCLCPP_INFO(this->get_logger(),
+                "Transform from Tool to Apriltag: translation [%.3f, %.3f, %.3f]",
+                tool_apriltag_msg.transform.translation.x,
+                tool_apriltag_msg.transform.translation.y,
+                tool_apriltag_msg.transform.translation.z);
+
+        Eigen::Vector3d euler_angles = tool_apriltag_transformation.rotation().eulerAngles(2, 1, 0);
+        RCLCPP_INFO(this->get_logger(),
+                "Transform from Tool to Apriltag: rotation \n yaw %.3f, \n pitch %.3f, \n roll %.3f",
+                euler_angles[0],
+                euler_angles[1],
+                euler_angles[2]);
     }
 
 
@@ -193,22 +227,39 @@ private:
         apriltag_detections_destroy(detections);
     }
 
+    void tf_sub_callback(const tf2_msgs::msg::TFMessage::SharedPtr msg)
+    {
+        for (const auto& tf_static : msg->transforms)
+        {
+            if (tf_static.child_frame_id == camera_frame_id_)  // Only process the apriltag_0 frame
+            {
+                last_pose_ = tf_static;  // Store the transform stamped
+                got_pose_ = true;
+            }
+        }
+    }
+
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_pub_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr detection_pub_;
     tf2_ros::TransformBroadcaster tf_broadcaster_;
+    tf2_ros::Buffer tf_buffer_;
+    tf2_ros::TransformListener tf_listener_;
 
     apriltag_family_t* tf_;
     apriltag_detector_t* td_;
-    std::string frame_id_;
+    std::string camera_frame_id_, tool_frame_id_;
     double tag_size_;
     double fx_, fy_, cx_, cy_;
+    bool got_pose_ = false;
+
+    geometry_msgs::msg::TransformStamped last_pose_;
 };
 
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<AprilTagDetectorNode>();
+    auto node = std::make_shared<MarkerDetectorNode>();
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
