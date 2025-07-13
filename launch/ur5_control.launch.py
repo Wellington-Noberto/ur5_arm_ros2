@@ -282,15 +282,24 @@ def generate_launch_description():
             launch_arguments=[('gz_args', [' -r -v 1 ', world_config_file])],
     )
 
+    pose_params = load_yaml(
+            package_name,
+            os.path.join("config", "spawn_pose.yaml"),
+        )['spawn_pose']['ros__parameters']
+
     # Spawn robot
     gazebo_spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
-        arguments=['-name', 'ur', '-topic', 'robot_description',
-            '-x', '1.9',                   # Desired X position
-            '-y', '-2.0',                  # Desired Y position
-            '-z', '0.85',                  # Desired Z position
-            '-Y', '0.0'],
+        arguments=['-name', 'ur',
+            '-topic', 'robot_description',
+            '-x', str(pose_params['x']),
+            '-y', str(pose_params['y']),
+            '-z', str(pose_params['z']),
+            '-R', str(pose_params['roll']),
+            '-P', str(pose_params['pitch']),
+            '-Y', str(pose_params['yaw']),
+        ],
         output='screen'
     )
 

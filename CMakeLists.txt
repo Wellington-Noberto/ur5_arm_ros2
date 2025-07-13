@@ -17,15 +17,16 @@ find_package(moveit_visual_tools REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(apriltag REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_eigen REQUIRED)
 
-add_executable(motion_planning_api_tutorial
+add_executable(motion_planner
     src/motion_planning.cpp)
 add_executable(marker_detector
     src/marker_detector.cpp)
   add_executable(pose_evaluator
     src/pose_evaluator.cpp)
 
-ament_target_dependencies(motion_planning_api_tutorial
+ament_target_dependencies(motion_planner
   rclcpp
   pluginlib
   ros2_control
@@ -43,11 +44,13 @@ ament_target_dependencies(marker_detector
   OpenCV
   apriltag
   tf2_ros
+  tf2_eigen
 )
 
 ament_target_dependencies(pose_evaluator
   rclcpp
   tf2_ros
+  tf2_eigen
 )
 
 target_link_libraries(marker_detector
@@ -59,7 +62,7 @@ install(DIRECTORY launch urdf worlds config rviz hooks meshes src
 )
 
 install(TARGETS
-  motion_planning_api_tutorial
+  motion_planner
   marker_detector
   pose_evaluator
   DESTINATION lib/${PROJECT_NAME})
