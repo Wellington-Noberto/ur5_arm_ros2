@@ -55,6 +55,9 @@
 #include <moveit/moveit_cpp/moveit_cpp.h>
 #include <moveit/moveit_cpp/planning_component.h>
 
+#include <moveit/trajectory_processing/iterative_time_parameterization.h>
+
+
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("motion_planning_api_tutorial");
 
 class MissionPlanner : public rclcpp::Node
@@ -158,34 +161,64 @@ public:
     geometry_msgs::msg::TransformStamped goal_pose = tf2::eigenToTransform(base_goal_eigen);
 
     RCLCPP_INFO(this->get_logger(),
-                "Transform from camera_ros_link to apriltag_0: translation [%.3f, %.3f, %.3f]",
+                "Transform from base to apriltag_0: translation [%.3f, %.3f, %.3f]",
                 goal_pose.transform.translation.x,
                 goal_pose.transform.translation.y,
                 goal_pose.transform.translation.z);
   }
 
-  void plan_and_execute()
+  void plan_and_execute(std::vector<geometry_msgs::msg::Pose> waypoints)
   {
-    RCLCPP_INFO(get_logger(), "Setting target pose...");
+    RCLCPP_INFO(this->get_logger(), "Setting target pose...");
 
-    geometry_msgs::msg::PoseStamped target_pose;
-    target_pose.header.frame_id = "base_link";
-    target_pose.pose.position.x = 0.6;
-    target_pose.pose.position.y = 0.0;
-    target_pose.pose.position.z = 0.2;
-    target_pose.pose.orientation.x = -0.707;
-    target_pose.pose.orientation.w = 0.707;
+    // [0.445, -0.011, -0.090]
+
+
 
     auto state_monitor = moveit_cpp_->getPlanningSceneMonitor()->getStateMonitor();
 
-    RCLCPP_INFO(get_logger(), "Waiting for complete robot state...");
+    RCLCPP_INFO(this->get_logger(), "Waiting for complete robot state...");
     auto ros_clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);  // Use sim time
     state_monitor->waitForCurrentState(ros_clock->now(), 5.0);
 
 
     if (!state_monitor->haveCompleteState()) {
-      RCLCPP_ERROR(get_logger(), "Joint state is incomplete or missing after timeout.");
+      RCLCPP_ERROR(this->get_logger(), "Joint state is incomplete or missing after timeout.");
       return;
+    }
+
+
+
+
+    // geometry_msgs::msg::Pose pose2 = pose1;
+    // pose2.position.x += 0.1;
+    // waypoints.push_back(pose2);
+
+    // geometry_msgs::msg::Pose pose3 = pose2;
+    // pose3.position.z += 0.1;
+    // waypoints.push_back(pose3);
+
+    // Set start state from current planning scene
+    moveit_msgs::msg::CollisionObject collision_object;
+    collision_object.header.frame_id = base_link_;
+    collision_object.id = "table";
+
+    shape_msgs::msg::SolidPrimitive box;
+    box.type = box.BOX;
+    box.dimensions = { 0.5, 1.0, 0.1 };
+
+    geometry_msgs::msg::Pose box_pose;
+    box_pose.position.x = 0.0;
+    box_pose.position.y = 0.5;
+    box_pose.position.z = 0.0;
+
+    collision_object.primitives.push_back(box);
+    collision_object.primitive_poses.push_back(box_pose);
+    collision_object.operation = collision_object.ADD;
+
+    {  // Lock PlanningScene
+      planning_scene_monitor::LockedPlanningSceneRW scene(moveit_cpp_->getPlanningSceneMonitorNonConst());
+      scene->processCollisionObjectMsg(collision_object);
     }
 
 
@@ -193,47 +226,31 @@ public:
     moveit::core::RobotState current_state = planning_scene->getCurrentState();
     planning_component_->setStartState(current_state);
 
-    // while (!planning_scene_monitor->getStateMonitor()->isActive() ||
-    //       !planning_scene_monitor->getStateMonitor()->haveCompleteState()) {
-    //     RCLCPP_INFO(get_logger(), "Waiting for robot state to be available...");
-    //     rclcpp::sleep_for(std::chrono::milliseconds(100));
-    // }
 
+    for (size_t i = 0; i < waypoints.size(); ++i) {
+      geometry_msgs::msg::PoseStamped goal_pose;
+      goal_pose.header.frame_id = "base_link";
+      goal_pose.pose = waypoints[i];
 
-    // auto planning_scene = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene();
-    // planning_scene->getCurrentStateNonConst().printStatePositions();
+      RCLCPP_INFO(this->get_logger(), "Planning to waypoint %ld...", i + 1);
 
+      planning_component_->setGoal(goal_pose, tool_link_);
+      auto plan = planning_component_->plan();
 
-    // auto current_state = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene()->getCurrentState();
+      if (plan) {
+        RCLCPP_INFO(this->get_logger(), "Planning to waypoint %ld succeeded, executing...", i + 1);
+        planning_component_->execute();
+        // Optionally: wait for execution to complete, or add a small delay
+      } else {
+        RCLCPP_ERROR(this->get_logger(), "Planning to waypoint %ld failed.", i + 1);
+        break;  // Stop if one fails
+      }
 
-    planning_component_->setGoal(target_pose, tool_link_);
-
-    double joint_value = current_state.getVariablePosition("shoulder_lift_joint");
-    RCLCPP_INFO(get_logger(), "MoveIt sees shoulder_lift_joint = %f", joint_value);
-
-    auto start_state = planning_component_->getStartState();
-    const auto& joint_model_group = start_state->getJointModelGroup(planning_group_);
-    std::vector<double> joints;
-    start_state->copyJointGroupPositions(joint_model_group, joints);
-    const auto& names = joint_model_group->getVariableNames();
-
-    for (size_t i = 0; i < names.size(); ++i) {
-      RCLCPP_INFO(get_logger(), "START STATE - Joint %s: %f", names[i].c_str(), joints[i]);
+      // Update the start state to the new goal for next iteration
+      planning_component_->setStartStateToCurrentState();
+      set_goal_pose();
     }
 
-
-
-    auto plan_solution = planning_component_->plan();
-
-    if (plan_solution)
-    {
-      RCLCPP_INFO(get_logger(), "Planning succeeded, executing...");
-      planning_component_->execute();
-    }
-    else
-    {
-      RCLCPP_ERROR(get_logger(), "Planning failed.");
-    }
   }
 
   // 1 - Go to pose and wait for detection
@@ -263,132 +280,25 @@ int main(int argc, char **argv)
 
   node->init();
   node->inspection();
-  node->plan_and_execute();
+
+  // [0.445, -0.011, -0.090]
+  std::vector<geometry_msgs::msg::Pose> waypoints;
+
+  geometry_msgs::msg::PoseStamped target_pose;
+  target_pose.header.frame_id = base_link_;
+  target_pose.pose.position.x = 0.1;
+  target_pose.pose.position.y = 0.7;
+  target_pose.pose.position.z = 0.3;
+  target_pose.pose.orientation.x = 1.0;
+  target_pose.pose.orientation.w = 0.0;
+
+  waypoints.push_back(target_pose.pose);
+
+  node->plan_and_execute(waypoints);
+
+
 
   rclcpp::spin(node);
-  // rclcpp::NodeOptions node_options;
-  // node_options.automatically_declare_parameters_from_overrides(true);
-
-  // std::shared_ptr<rclcpp::Node> motion_planning_api_tutorial_node =
-  //     rclcpp::Node::make_shared("motion_planning_api_tutorial", node_options);
-
-  // rclcpp::executors::SingleThreadedExecutor executor;
-  // executor.add_node(motion_planning_api_tutorial_node);
-  // std::thread([&executor]()
-  //             { executor.spin(); })
-  //     .detach();
-
-  // BEGIN_TUTORIAL
-  // Start
-  // ^^^^^
-  // Setting up to start using a planner is pretty easy. Planners are
-  // setup as plugins in MoveIt and you can use the ROS pluginlib
-  // interface to load any planner that you want to use. Before we can
-  // load the planner, we need two objects, a RobotModel and a
-  // PlanningScene. We will start by instantiating a
-  // :moveit_codedir:`RobotModelLoader<moveit_ros/planning/robot_model_loader/include/moveit/robot_model_loader/robot_model_loader.hpp>`
-  // object, which will look up the robot description on the ROS
-  // parameter server and construct a
-  // :moveit_codedir:`RobotModel<moveit_core/robot_model/include/moveit/robot_model/robot_model.hpp>`
-  // for us to use.
-
-  // const std::string PLANNING_GROUP = "ur_manipulator";
-  // robot_model_loader::RobotModelLoader robot_model_loader(motion_planning_api_tutorial_node, "robot_description");
-  // const moveit::core::RobotModelPtr &robot_model = robot_model_loader.getModel();
-  // /* Create a RobotState and JointModelGroup to keep track of the current robot pose and planning group*/
-  // moveit::core::RobotStatePtr robot_state(new moveit::core::RobotState(robot_model));
-  // const moveit::core::JointModelGroup *joint_model_group = robot_state->getJointModelGroup(PLANNING_GROUP);
-
-  // // Using the
-  // // :moveit_codedir:`RobotModel<moveit_core/robot_model/include/moveit/robot_model/robot_model.hpp>`,
-  // // we can construct a
-  // // :moveit_codedir:`PlanningScene<moveit_core/planning_scene/include/moveit/planning_scene/planning_scene.hpp>`
-  // // that maintains the state of the world (including the robot).
-  // planning_scene::PlanningScenePtr planning_scene(new planning_scene::PlanningScene(robot_model));
-
-  // // Configure a valid robot state
-  // planning_scene->getCurrentStateNonConst().setToDefaultValues(joint_model_group, "ready");
-
-  // // We will now construct a loader to load a planner, by name.
-  // // Note that we are using the ROS pluginlib library here.
-  // std::unique_ptr<pluginlib::ClassLoader<planning_interface::PlannerManager>> planner_plugin_loader;
-  // planning_interface::PlannerManagerPtr planner_instance;
-  // std::vector<std::string> planner_plugin_names;
-
-  // // FOr debug only
-  // for (const auto &link : robot_model->getLinkModelNames())
-  // {
-  //   RCLCPP_INFO(LOGGER, "Loaded link: %s", link.c_str());
-  // }
-
-  // // We will get the name of planning plugin we want to load
-  // // from the ROS parameter server, and then load the planner
-  // // making sure to catch all exceptions.
-  // if (!motion_planning_api_tutorial_node->get_parameter("ompl.planning_plugins", planner_plugin_names))
-  //   RCLCPP_FATAL(LOGGER, "Could not find planner plugin names");
-  // try
-  // {
-  //   planner_plugin_loader.reset(new pluginlib::ClassLoader<planning_interface::PlannerManager>(
-  //       "moveit_core", "planning_interface::PlannerManager"));
-  // }
-  // catch (pluginlib::PluginlibException &ex)
-  // {
-  //   RCLCPP_FATAL(LOGGER, "Exception while creating planning plugin loader %s", ex.what());
-  // }
-
-  // if (planner_plugin_names.empty())
-  // {
-  //   RCLCPP_ERROR(LOGGER,
-  //                "No planner plugins defined. Please make sure that the planning_plugins parameter is not empty.");
-  //   return -1;
-  // }
-
-  // const auto &planner_name = planner_plugin_names.at(0);
-  // try
-  // {
-  //   planner_instance.reset(planner_plugin_loader->createUnmanagedInstance(planner_name));
-  //   if (!planner_instance->initialize(robot_model, motion_planning_api_tutorial_node,
-  //                                     motion_planning_api_tutorial_node->get_namespace()))
-  //     RCLCPP_FATAL(LOGGER, "Could not initialize planner instance");
-  //   RCLCPP_INFO(LOGGER, "Using planning interface '%s'", planner_instance->getDescription().c_str());
-  // }
-  // catch (pluginlib::PluginlibException &ex)
-  // {
-  //   const std::vector<std::string> &classes = planner_plugin_loader->getDeclaredClasses();
-  //   std::stringstream ss;
-  //   for (const auto &cls : classes)
-  //     ss << cls << " ";
-  //   RCLCPP_ERROR(LOGGER, "Exception while loading planner '%s': %s\nAvailable plugins: %s", planner_name.c_str(),
-  //                ex.what(), ss.str().c_str());
-  // }
-
-  // moveit::planning_interface::MoveGroupInterface move_group(motion_planning_api_tutorial_node, PLANNING_GROUP);
-
-  // // Optional: Set planning time
-  // move_group.setPlanningTime(5.0);
-
-  // // Set a reachable goal pose (adjust as needed)
-  // geometry_msgs::msg::Pose target_pose;
-  // target_pose.orientation.w = 1.0;
-  // target_pose.position.x = 0.4;
-  // target_pose.position.y = 0.0;
-  // target_pose.position.z = 0.4;
-  // move_group.setPoseTarget(target_pose);
-
-  // // Plan and move
-  // moveit::planning_interface::MoveGroupInterface::Plan plan;
-  // bool success = (move_group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS);
-
-  // if (success)
-  // {
-  //   RCLCPP_INFO(LOGGER, "Plan successful. Executing...");
-  //   move_group.execute(plan);
-  // }
-  // else
-  // {
-  //   RCLCPP_ERROR(LOGGER, "Planning failed.");
-  // }
-
   rclcpp::shutdown();
   return 0;
 }

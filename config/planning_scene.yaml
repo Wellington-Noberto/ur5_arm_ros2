@@ -18,6 +18,7 @@ ompl:
   # To optionally use Ruckig for jerk-limited smoothing, add this line to the request adapters below
   # default_planning_request_adapters/AddRuckigTrajectorySmoothing
   request_adapters: >-
+    default_planner_request_adapters/AddRuckigTrajectorySmoothing
     default_planner_request_adapters/AddTimeOptimalParameterization
     default_planner_request_adapters/ResolveConstraintFrames
     default_planner_request_adapters/FixWorkspaceBounds
@@ -28,16 +29,18 @@ ompl:
     default_planning_response_adapters/ValidateSolution
     default_planning_response_adapters/DisplayMotionPath
   planner_configs:
-    PRMstarkConfigDefault:
-      type: geometric::PRMstar
+    RRTConnectkConfigDefault:
+      type: geometric::RRTConnect
+      range: 0.1
   # Define planner(s) for each move_group
+
   ur_manipulator:
     planner_configs:
-      - PRMstarkConfigDefault
+      - RRTConnectkConfigDefault
   # Add additional planning pipeline config here
 plan_request_params:
   planning_attempts: 3
   planning_pipeline: ompl
   planner_id: "RRTConnectkConfigDefault"
-  max_velocity_scaling_factor: 0.1
-  max_acceleration_scaling_factor: 0.1
+  max_velocity_scaling_factor: 0.2
+  max_acceleration_scaling_factor: 0.2

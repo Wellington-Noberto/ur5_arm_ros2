@@ -185,7 +185,7 @@ private:
 
         Eigen::Vector3d euler_angles = tool_apriltag_transformation.rotation().eulerAngles(2, 1, 0);
         RCLCPP_INFO(this->get_logger(),
-                "Transform from Tool to Apriltag: rotation \n yaw %.3f, \n pitch %.3f, \n roll %.3f",
+                "Transform from Tool to Apriltag: rotation yaw %.3f, pitch %.3f, roll %.3f",
                 euler_angles[0],
                 euler_angles[1],
                 euler_angles[2]);
