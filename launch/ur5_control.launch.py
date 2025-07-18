@@ -333,12 +333,6 @@ def generate_launch_description():
         )
     )
 
-    delay_motion_after_join_state_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[motion_node],
-        )
-    )
 
     ##
     declared_arguments = []
