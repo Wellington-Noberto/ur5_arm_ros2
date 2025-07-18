@@ -179,7 +179,9 @@ def generate_launch_description():
     #     .to_moveit_configs()
     # )
 
-
+    move_group_capabilities = {
+        "capabilities": "move_group/ExecuteTaskSolutionCapability"
+    }
 
     # Start the actual move_group node/action server
     move_group_node = Node(
@@ -196,6 +198,7 @@ def generate_launch_description():
             trajectory_execution,
             moveit_controllers,
             planning_scene_monitor_parameters,
+            move_group_capabilities, # mtc
             {"planning_pipelines": ["ompl"]},
             {"ompl.planning_plugins": ["ompl_interface/OMPLPlanner"]},
             {"use_sim_time": use_sim_time},
@@ -246,7 +249,7 @@ def generate_launch_description():
         executable="robot_state_publisher",
         output="both",
         parameters=[robot_description,
-                ],
+                {"use_sim_time": use_sim_time}],
     )
 
 
@@ -330,6 +333,13 @@ def generate_launch_description():
         )
     )
 
+    delay_motion_after_join_state_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[motion_node],
+        )
+    )
+
     ##
     declared_arguments = []
     declared_arguments.append(
@@ -341,6 +351,8 @@ def generate_launch_description():
             "have to be updated.",
         )
     )
+
+
 
 
     return LaunchDescription(
@@ -356,6 +368,7 @@ def generate_launch_description():
         gz_parameters_bridge,
         rviz_node,
         delay_joint_state_broadcaster_after_robot_controller_spawner,
+        # delay_motion_after_join_state_spawner
         # joint_state_broadcaster_spawner,
     ])
     # + load_controllers

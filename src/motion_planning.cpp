@@ -44,6 +44,7 @@
 #include <moveit/planning_interface/planning_interface.h>
 #include <moveit/planning_pipeline/planning_pipeline.h>
 #include <moveit/planning_scene/planning_scene.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 
 #include <moveit/planning_scene/planning_scene.h>
@@ -213,10 +214,8 @@ public:
     collision_object.primitive_poses.push_back(box_pose);
     collision_object.operation = collision_object.ADD;
 
-    {  // Lock PlanningScene
-      planning_scene_monitor::LockedPlanningSceneRW scene(moveit_cpp_->getPlanningSceneMonitorNonConst());
-      scene->processCollisionObjectMsg(collision_object);
-    }
+    moveit::planning_interface::PlanningSceneInterface psi;
+    psi.applyCollisionObject(collision_object);
   }
 
   void doTask(std::string task_name, std::vector<geometry_msgs::msg::Pose> waypoints)
@@ -265,6 +264,8 @@ public:
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
       mtc::Stage* current_state_ptr = nullptr;  // Forward current_state on to grasp pose generator
     #pragma GCC diagnostic pop
+
+    auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
 
     auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
     cartesian_planner->setMaxVelocityScalingFactor(0.2);
@@ -315,24 +316,47 @@ public:
     }
 
     {
-      auto stage = std::make_unique<mtc::stages::MoveRelative>("x +0.2", cartesian_planner);
+      auto stage = std::make_unique<mtc::stages::MoveTo>("initial_pose", interpolation_planner);
+      stage->setGroup(planning_group_);
+      stage->setIKFrame(tool_link_);
+
+      stage->setPathConstraints({});
+      // stage->setGoalConstraints({});
+
+      geometry_msgs::msg::PoseStamped target_pose;
+      target_pose.header.frame_id = base_link_;  // global frame (e.g. "base_link")
+      target_pose.pose.position.x = 0.1;
+      target_pose.pose.position.y = 0.7;
+      target_pose.pose.position.z = 0.3;
+      target_pose.pose.orientation.x = 1.0;
+      target_pose.pose.orientation.w = 0.0;
+      // direction.vector.z = -0.2;
+      stage->setGoal(target_pose);
+      task.add(std::move(stage));
+    }
+
+
+    {
+      auto stage = std::make_unique<mtc::stages::MoveRelative>("x +0.2", interpolation_planner);
       stage->setGroup(planning_group_);
       stage->setIKFrame(tool_link_);
       geometry_msgs::msg::Vector3Stamped direction;
       direction.header.frame_id = base_link_;
       direction.vector.x = 0.2;
-      direction.vector.z = -0.2;
+      stage->setPathConstraints({});
+
+      // direction.vector.z = -0.2;
       stage->setDirection(direction);
       task.add(std::move(stage));
     }
 
     {
-      auto stage = std::make_unique<mtc::stages::MoveRelative>("y -0.3", cartesian_planner);
+      auto stage = std::make_unique<mtc::stages::MoveRelative>("y -0.3", interpolation_planner);
       stage->setGroup(planning_group_);
       stage->setIKFrame(tool_link_);
       geometry_msgs::msg::Vector3Stamped direction;
       direction.header.frame_id = base_link_;
-      direction.vector.z = -0.3;
+      direction.vector.y = -0.3;
       stage->setDirection(direction);
       task.add(std::move(stage));
     }
