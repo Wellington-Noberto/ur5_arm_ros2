@@ -19,6 +19,10 @@ find_package(apriltag REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_eigen REQUIRED)
 
+find_package(moveit_task_constructor_core REQUIRED)
+find_package(moveit_task_constructor_msgs REQUIRED)
+find_package(moveit_task_constructor_visualization REQUIRED)
+
 add_executable(motion_planner
     src/motion_planning.cpp)
 add_executable(marker_detector
@@ -34,6 +38,9 @@ ament_target_dependencies(motion_planner
   moveit_ros_planning
   moveit_ros_planning_interface
   moveit_visual_tools
+  moveit_task_constructor_core
+  moveit_task_constructor_msgs
+  moveit_task_constructor_visualization
 )
 
 ament_target_dependencies(marker_detector

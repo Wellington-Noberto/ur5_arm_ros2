@@ -55,16 +55,25 @@
 #include <moveit/moveit_cpp/moveit_cpp.h>
 #include <moveit/moveit_cpp/planning_component.h>
 
+#include <moveit/task_constructor/task.h>
+#include <moveit/task_constructor/solvers.h>
+#include <moveit/task_constructor/stages.h>
+#include <moveit/task_constructor/stages/move_to.h>
+
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
 
 
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("motion_planning_api_tutorial");
 
+namespace mtc = moveit::task_constructor;
 class MissionPlanner : public rclcpp::Node
 {
 public:
   MissionPlanner(const rclcpp::NodeOptions &options)
-      : Node("mission_planner", options), tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_)
+      : Node("mission_planner", options)
+      , visual_tools_{nullptr}
+      , tf_buffer_(this->get_clock())
+      , tf_listener_(tf_buffer_)
   {
     this->declare_parameter<std::string>("base_link", "base_link");
     this->declare_parameter<std::string>("tool_link", "tool0");
@@ -105,6 +114,20 @@ public:
     planning_component_ = std::make_shared<moveit_cpp::PlanningComponent>(planning_group_, moveit_cpp_);
     RCLCPP_INFO(this->get_logger(), "planning_component_");
 
+    // Init Visual
+
+    visual_tools_ = std::make_shared<moveit_visual_tools::MoveItVisualTools>(this->shared_from_this(),
+                      base_link_,
+                      rviz_visual_tools::RVIZ_MARKER_TOPIC,
+                      moveit_cpp_->getPlanningSceneMonitorNonConst());
+    visual_tools_->deleteAllMarkers();
+    visual_tools_->loadRemoteControl();
+
+    // Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
+    // text_pose.translation().z() = 1.75;
+    // visual_tools.publishText(text_pose, "MoveItCpp_Demo", rvt::WHITE, rvt::XLARGE);
+    // visual_tools.trigger();
+
     set_planning_group();
   }
 
@@ -116,6 +139,9 @@ public:
     // moveit_cpp_->getPlanningSceneMonitor()->startWorldGeometryMonitor();
 
     // planning_component_->setStartStateToCurrentState();
+
+
+
 
 
 
@@ -167,38 +193,9 @@ public:
                 goal_pose.transform.translation.z);
   }
 
-  void plan_and_execute(std::vector<geometry_msgs::msg::Pose> waypoints)
+  void setup_planning_scene()
   {
-    RCLCPP_INFO(this->get_logger(), "Setting target pose...");
-
-    // [0.445, -0.011, -0.090]
-
-
-
-    auto state_monitor = moveit_cpp_->getPlanningSceneMonitor()->getStateMonitor();
-
-    RCLCPP_INFO(this->get_logger(), "Waiting for complete robot state...");
-    auto ros_clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);  // Use sim time
-    state_monitor->waitForCurrentState(ros_clock->now(), 5.0);
-
-
-    if (!state_monitor->haveCompleteState()) {
-      RCLCPP_ERROR(this->get_logger(), "Joint state is incomplete or missing after timeout.");
-      return;
-    }
-
-
-
-
-    // geometry_msgs::msg::Pose pose2 = pose1;
-    // pose2.position.x += 0.1;
-    // waypoints.push_back(pose2);
-
-    // geometry_msgs::msg::Pose pose3 = pose2;
-    // pose3.position.z += 0.1;
-    // waypoints.push_back(pose3);
-
-    // Set start state from current planning scene
+    // Add table obstacle
     moveit_msgs::msg::CollisionObject collision_object;
     collision_object.header.frame_id = base_link_;
     collision_object.id = "table";
@@ -209,7 +206,7 @@ public:
 
     geometry_msgs::msg::Pose box_pose;
     box_pose.position.x = 0.0;
-    box_pose.position.y = 0.5;
+    box_pose.position.y = 0.6;
     box_pose.position.z = 0.0;
 
     collision_object.primitives.push_back(box);
@@ -220,49 +217,253 @@ public:
       planning_scene_monitor::LockedPlanningSceneRW scene(moveit_cpp_->getPlanningSceneMonitorNonConst());
       scene->processCollisionObjectMsg(collision_object);
     }
+  }
 
+  void doTask(std::string task_name, std::vector<geometry_msgs::msg::Pose> waypoints)
+  {
+    task_ = create_task(task_name, waypoints);
+
+    try
+    {
+      task_.init();
+    }
+    catch (mtc::InitStageException& e)
+    {
+      RCLCPP_ERROR_STREAM(LOGGER, e);
+      return;
+    }
+
+    if (!task_.plan(5))
+    {
+      RCLCPP_ERROR_STREAM(LOGGER, "Task planning failed");
+      return;
+    }
+    task_.introspection().publishSolution(*task_.solutions().front());
+
+    auto result = task_.execute(*task_.solutions().front());
+    if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
+    {
+      RCLCPP_ERROR_STREAM(LOGGER, "Task execution failed");
+      return;
+    }
+
+    return;
+  }
+
+
+  mtc::Task create_task(std::string task_name, std::vector<geometry_msgs::msg::Pose> waypoints)
+  {
+    mtc::Task task;
+    task.stages()->setName(task_name);
+    task.loadRobotModel(this->shared_from_this());
+
+    // task.setProperty("group", planning_group_);
+    // task.setProperty("eef", planning_group_);
+    task.setProperty("ik_frame", tool_link_);
+
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+      mtc::Stage* current_state_ptr = nullptr;  // Forward current_state on to grasp pose generator
+    #pragma GCC diagnostic pop
+
+    auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
+    cartesian_planner->setMaxVelocityScalingFactor(0.2);
+    cartesian_planner->setMaxAccelerationScalingFactor(0.2);
+    cartesian_planner->setStepSize(0.02);
+    cartesian_planner->setJumpThreshold(0.0);  // Disables
+    cartesian_planner->setIKFrame(tool_link_);
+    cartesian_planner->setProperty("min_fraction", 0.1);
+
+    auto state_monitor = moveit_cpp_->getPlanningSceneMonitor()->getStateMonitor();
+
+    RCLCPP_INFO(this->get_logger(), "Waiting for complete robot state...");
+    auto ros_clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);  // Use sim time
+    state_monitor->waitForCurrentState(ros_clock->now(), 5.0);
+
+    if (!state_monitor->haveCompleteState()) {
+      RCLCPP_ERROR(this->get_logger(), "Joint state is incomplete or missing after timeout.");
+      return task;
+    }
+
+	  // auto scene = std::make_shared<planning_scene::PlanningScene>(task.getRobotModel());
+    auto scene = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene();
+
+
+    {
+      auto current = std::make_unique<mtc::stages::CurrentState>("current state");
+
+      //
+      auto planning_scene = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene();
+      auto robot_model = moveit_cpp_->getRobotModel();
+      moveit::core::RobotState current_state = planning_scene->getCurrentState();
+
+      const std::vector<std::string>& joint_names = current_state.getVariableNames();
+      for (const auto& joint_name : joint_names) {
+        double value = current_state.getVariablePosition(joint_name);
+        RCLCPP_INFO(this->get_logger(), "Joint %s = %f", joint_name.c_str(), value);
+      }
+
+      task.add(std::move(current));
+
+      // auto& state = scene->getCurrentStateNonConst();
+		  // state.setToDefaultValues(state.getJointModelGroup(planning_group_), "ready");
+
+      // auto fixed = std::make_unique<mtc::stages::FixedState>("initial state");
+		  // fixed->setState(scene);
+		  // task.add(std::move(fixed));
+
+    }
+
+    {
+      auto stage = std::make_unique<mtc::stages::MoveRelative>("x +0.2", cartesian_planner);
+      stage->setGroup(planning_group_);
+      stage->setIKFrame(tool_link_);
+      geometry_msgs::msg::Vector3Stamped direction;
+      direction.header.frame_id = base_link_;
+      direction.vector.x = 0.2;
+      direction.vector.z = -0.2;
+      stage->setDirection(direction);
+      task.add(std::move(stage));
+    }
+
+    {
+      auto stage = std::make_unique<mtc::stages::MoveRelative>("y -0.3", cartesian_planner);
+      stage->setGroup(planning_group_);
+      stage->setIKFrame(tool_link_);
+      geometry_msgs::msg::Vector3Stamped direction;
+      direction.header.frame_id = base_link_;
+      direction.vector.z = -0.3;
+      stage->setDirection(direction);
+      task.add(std::move(stage));
+    }
+
+    // {  // move from reached state back to the original state, using joint interpolation
+    //   mtc::stages::Connect::GroupPlannerVector planners = { { planning_group_, cartesian_planner } };
+    //   auto connect = std::make_unique<mtc::stages::Connect>("connect", planners);
+    //   task.add(std::move(connect));
+    // }
+
+    // {  // final state is original state again
+    //   auto fixed = std::make_unique<mtc::stages::FixedState>("final state");
+    //   fixed->setState(scene);
+    //   task.add(std::move(fixed));
+    // }
+
+
+    // auto stage_state_current = std::make_unique<mtc::stages::CurrentState>("current");
+    // current_state_ptr = stage_state_current.get();
+    // task.add(std::move(stage_state_current));
+
+    // auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
+
+
+
+
+    // for (size_t i = 0; i < waypoints.size(); ++i)
+    // {
+    //   auto move = std::make_unique<mtc::stages::MoveTo>("move_"+std::to_string(i),
+    //                                       cartesian_planner);
+    //   move->setGroup(planning_group_);
+    //   move->setIKFrame(tool_link_);
+
+    //   geometry_msgs::msg::PoseStamped goal;
+    //   goal.header.frame_id = base_link_;
+    //   goal.pose = waypoints[i];
+    //   move->setGoal(goal);
+    //   task.add(std::move(move));
+    // }
+
+    return task;
+  }
+
+  void plan_and_execute(std::vector<geometry_msgs::msg::Pose> waypoints)
+  {
+    RCLCPP_INFO(this->get_logger(), "Setting target pose...");
+
+    // [0.445, -0.011, -0.090]
+
+    // Transition
+    visual_tools_->prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+    visual_tools_->deleteAllMarkers();
+    visual_tools_->trigger();
+
+
+
+    auto state_monitor = moveit_cpp_->getPlanningSceneMonitor()->getStateMonitor();
+
+    RCLCPP_INFO(this->get_logger(), "Waiting for complete robot state...");
+    auto ros_clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);  // Use sim time
+    state_monitor->waitForCurrentState(ros_clock->now(), 5.0);
+
+    if (!state_monitor->haveCompleteState()) {
+      RCLCPP_ERROR(this->get_logger(), "Joint state is incomplete or missing after timeout.");
+      return;
+    }
+
+
+
+
+    // 4. Compute Cartesian path
+    double eef_step = 0.01;
+    const double jump_threshold = 0.0;
+    moveit_msgs::msg::RobotTrajectory trajectory;
+    moveit::planning_interface::MoveGroupInterface move_group(this->shared_from_this(), planning_group_);
 
     auto planning_scene = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene();
+    auto robot_model = moveit_cpp_->getRobotModel();
     moveit::core::RobotState current_state = planning_scene->getCurrentState();
     planning_component_->setStartState(current_state);
 
+    double fraction = move_group.computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
 
-    for (size_t i = 0; i < waypoints.size(); ++i) {
-      geometry_msgs::msg::PoseStamped goal_pose;
-      goal_pose.header.frame_id = "base_link";
-      goal_pose.pose = waypoints[i];
 
-      RCLCPP_INFO(this->get_logger(), "Planning to waypoint %ld...", i + 1);
+    RCLCPP_INFO(this->get_logger(), "Cartesian path completed %.1f%%", fraction * 100.0);
 
-      planning_component_->setGoal(goal_pose, tool_link_);
-      auto plan = planning_component_->plan();
-
-      if (plan) {
-        RCLCPP_INFO(this->get_logger(), "Planning to waypoint %ld succeeded, executing...", i + 1);
-        planning_component_->execute();
-        // Optionally: wait for execution to complete, or add a small delay
-      } else {
-        RCLCPP_ERROR(this->get_logger(), "Planning to waypoint %ld failed.", i + 1);
-        break;  // Stop if one fails
-      }
-
-      // Update the start state to the new goal for next iteration
-      planning_component_->setStartStateToCurrentState();
-      set_goal_pose();
+    // 5. Convert to RobotTrajectory
+    auto result = move_group.execute(trajectory);
+    if (result != moveit::core::MoveItErrorCode::SUCCESS) {
+      RCLCPP_ERROR(this->get_logger(), "Trajectory execution failed with code: %d", result.val);
+      return;
     }
 
-  }
+    // for (size_t i = 0; i < waypoints.size(); ++i) {
+    //   geometry_msgs::msg::PoseStamped goal_pose;
+    //   goal_pose.header.frame_id = base_link_;
+    //   goal_pose.pose = waypoints[i];
 
-  // 1 - Go to pose and wait for detection
+    //   RCLCPP_INFO(this->get_logger(), "Planning to waypoint %ld...", i + 1);
 
-  // 2 - Get the transformation from base to tool
+    //   planning_component_->setGoal(goal_pose, tool_link_);
+    //   auto plan = planning_component_->plan();
 
-  // 3 - Set the goal pose
+    //   if (plan) {
+    //     RCLCPP_INFO(this->get_logger(), "Planning to waypoint %ld succeeded, executing...", i + 1);
+    //     planning_component_->execute();
+    //     // Optionally: wait for execution to complete, or add a small delay
+    //   } else {
+    //     RCLCPP_ERROR(this->get_logger(), "Planning to waypoint %ld failed.", i + 1);
+    //     break;  // Stop if one fails
+    //   }
+
+    //   // Update the start state to the new goal for next iteration
+    //   planning_component_->setStartStateToCurrentState();
+    //   set_goal_pose();
+    // }
+
+
+
+
+}
+
+
 
 private:
   std::shared_ptr<moveit_cpp::MoveItCpp> moveit_cpp_;
   std::shared_ptr<moveit_cpp::PlanningComponent> planning_component_;
   moveit::core::JointModelGroup* joint_model_group;
+  std::shared_ptr<moveit_visual_tools::MoveItVisualTools> visual_tools_;
+
+  mtc::Task task_;
 
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
@@ -275,8 +476,19 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions options;
-  options.automatically_declare_parameters_from_overrides(true); // ✅ this is key
+  options.automatically_declare_parameters_from_overrides(true);
   auto node = std::make_shared<MissionPlanner>(options);
+
+  // 2. Create a Multi-Threaded Executor.
+  //    (A SingleThreadedExecutor would also work if you only have one background thread)
+  rclcpp::executors::MultiThreadedExecutor executor;
+  executor.add_node(node);
+
+  // 3. Spin the executor in a background thread. This thread will now handle
+  //    all ROS callbacks (subscriptions, timers, etc.).
+  std::thread executor_thread([&executor]() {
+    executor.spin();
+  });
 
   node->init();
   node->inspection();
@@ -285,7 +497,7 @@ int main(int argc, char **argv)
   std::vector<geometry_msgs::msg::Pose> waypoints;
 
   geometry_msgs::msg::PoseStamped target_pose;
-  target_pose.header.frame_id = base_link_;
+  target_pose.header.frame_id = "base_link";
   target_pose.pose.position.x = 0.1;
   target_pose.pose.position.y = 0.7;
   target_pose.pose.position.z = 0.3;
@@ -294,11 +506,39 @@ int main(int argc, char **argv)
 
   waypoints.push_back(target_pose.pose);
 
-  node->plan_and_execute(waypoints);
+  // // 1 - Go to pose and wait for detection
+  // node->plan_and_execute(waypoints);
 
+  // waypoints.clear();
 
+  // waypoints.push_back(target_pose.pose);
 
-  rclcpp::spin(node);
+  geometry_msgs::msg::Pose pose2 = target_pose.pose;
+  pose2.position.x += 0.1;
+  pose2.position.y += 0.1;
+  waypoints.push_back(pose2);
+
+  geometry_msgs::msg::Pose pose3 = pose2;
+  pose3.position.x -= 0.2;
+  waypoints.push_back(pose3);
+
+  node->setup_planning_scene();
+  node->doTask("initial", waypoints);
+
+  // Add transitions  TODO
+
+  // 2 - Get the transformation from base to tool
+
+  // 3 - Set the goal pose
+
+  std::cin.get();
+
+  executor.cancel();
+  if (executor_thread.joinable())
+  {
+    executor_thread.join();
+  }
+
   rclcpp::shutdown();
   return 0;
 }
