@@ -105,27 +105,8 @@ def generate_launch_description():
         )
     }
 
-    # ompl_planning_pipeline_config = {
-    #     "ompl": {
-    #         "planning_plugin": "ompl_interface/OMPLPlanner",
-    #         "request_adapters": """default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints""",
-    #         "start_state_max_bounds_error": 0.1,
-    #     }
-    # }
-
 
     planning_scene_yaml = load_yaml(package_name, os.path.join("config", planning_scene_file))
-
-#     ompl_planning_pipeline_config["ompl"].update({
-#     "planning_plugin": "ompl_interface/OMPLPlanner",
-#     "request_adapters": "default_planner_request_adapters/AddTimeOptimalParameterization "
-#                         "default_planner_request_adapters/FixWorkspaceBounds "
-#                         "default_planner_request_adapters/FixStartStateBounds "
-#                         "default_planner_request_adapters/FixStartStateCollision "
-#                         "default_planner_request_adapters/FixStartStatePathConstraints",
-#     "start_state_max_bounds_error": 0.1
-# })
-
     planning_scene_monitor_parameters = {
         "publish_planning_scene": True,
         "publish_geometry_updates": True,
@@ -133,11 +114,6 @@ def generate_launch_description():
         "publish_transforms_updates": True,
     }
 
-#     planning_pipeline_config = {
-#     "planning_pipelines": ["ompl"],
-#     "planning_pipeline_configs": ompl_planning_pipeline_config
-
-# }
      # Trajectory Execution Configuration
     controllers_yaml = load_yaml(package_name, "config/controllers.yaml")
     # the scaled_joint_trajectory_controller does not work on fake hardware
@@ -151,6 +127,9 @@ def generate_launch_description():
         "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager",
     }
 
+    move_group_capabilities = {
+        "capabilities": "move_group/ExecuteTaskSolutionCapability"
+    }
 
     tutorial_node = Node(
         package=package_name,
@@ -165,6 +144,7 @@ def generate_launch_description():
             # ompl_planning_pipeline_config,
             moveit_controllers,
             {"use_sim_time": True},
+            move_group_capabilities,
             # planning_pipeline_config,
             planning_scene_yaml,
             {"trajectory_execution.allowed_start_tolerance": 0.5},

@@ -19,6 +19,9 @@ find_package(apriltag REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_eigen REQUIRED)
 
+find_package(weaver_interfaces REQUIRED)
+
+
 find_package(moveit_task_constructor_core REQUIRED)
 find_package(moveit_task_constructor_msgs REQUIRED)
 find_package(moveit_task_constructor_visualization REQUIRED)
@@ -41,6 +44,7 @@ ament_target_dependencies(motion_planner
   moveit_task_constructor_core
   moveit_task_constructor_msgs
   moveit_task_constructor_visualization
+  weaver_interfaces
 )
 
 ament_target_dependencies(marker_detector

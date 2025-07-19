@@ -24,6 +24,8 @@
   <depend>pluginlib</depend>
   <depend>cv_bridge</depend>
   <depend>apriltag</depend>
+  <depend>weaver_interfaces</depend>
+
 
   <depend>moveit_task_constructor_core</depend>
   <depend>moveit_task_constructor_msgs</depend>
