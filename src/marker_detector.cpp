@@ -151,8 +151,8 @@ private:
 
         // Publish Tool to apriltag transform
         const Eigen::Quaterniond optical_to_camera =
-            Eigen::AngleAxisd(-M_PI_2, Eigen::Vector3d::UnitY())
-            * Eigen::AngleAxisd(M_PI_2, Eigen::Vector3d::UnitX());
+            Eigen::AngleAxisd(-M_PI_2, Eigen::Vector3d::UnitX()) *
+            Eigen::AngleAxisd(M_PI_2, Eigen::Vector3d::UnitY());
 
 
         // Get the transformation from camera to tool
@@ -164,7 +164,7 @@ private:
         Eigen::Affine3d camera_apriltag_transformation = tf2::transformToEigen(transform);
 
         camera_apriltag_transformation.prerotate(optical_to_camera);
-        camera_apriltag_transformation.rotate(optical_to_camera);
+        // camera_apriltag_transformation.rotate(optical_to_camera);
 
         tool_apriltag_transformation = tool_camera_transformation * camera_apriltag_transformation;
 
@@ -177,18 +177,44 @@ private:
         // Publish Tool to Apriltag transform
         tf_broadcaster_.sendTransform(tool_apriltag_msg);
 
+        // RCLCPP_INFO(this->get_logger(),
+        //         "camera to tag [%.3f, %.3f, %.3f]",
+        //         transform.transform.translation.x,
+        //         transform.transform.translation.y,
+        //         transform.transform.translation.z);
+
+        // RCLCPP_INFO(this->get_logger(),
+        //         "camera to tag rotation x %.3f, y %.3f, z %.3f, w %.3f\n",
+        //         transform.transform.rotation.x,
+        //         transform.transform.rotation.y,
+        //         transform.transform.rotation.z,
+        //         transform.transform.rotation.w);
+
+        // RCLCPP_INFO(this->get_logger(),
+        //         "camera to tag[rotated] [%.3f, %.3f, %.3f]",
+        //         debug_tf.transform.translation.x,
+        //         debug_tf.transform.translation.y,
+        //         debug_tf.transform.translation.z);
+
+        // RCLCPP_INFO(this->get_logger(),
+        //         "camera to tag rotation[rotated] x %.3f, y %.3f, z %.3f, w %.3f\n",
+        //         debug_tf.transform.rotation.x,
+        //         debug_tf.transform.rotation.y,
+        //         debug_tf.transform.rotation.z,
+        //         debug_tf.transform.rotation.w);
+
         RCLCPP_INFO(this->get_logger(),
                 "Transform from Tool to Apriltag: translation [%.3f, %.3f, %.3f]",
                 tool_apriltag_msg.transform.translation.x,
                 tool_apriltag_msg.transform.translation.y,
                 tool_apriltag_msg.transform.translation.z);
 
-        Eigen::Vector3d euler_angles = tool_apriltag_transformation.rotation().eulerAngles(2, 1, 0);
         RCLCPP_INFO(this->get_logger(),
-                "Transform from Tool to Apriltag: rotation yaw %.3f, pitch %.3f, roll %.3f",
-                euler_angles[0],
-                euler_angles[1],
-                euler_angles[2]);
+                "Rotation from Tool to Apriltag: rotation x %.3f, y %.3f, z %.3f, w %.3f\n",
+                tool_apriltag_msg.transform.rotation.x,
+                tool_apriltag_msg.transform.rotation.y,
+                tool_apriltag_msg.transform.rotation.z,
+                tool_apriltag_msg.transform.rotation.w);
     }
 
 

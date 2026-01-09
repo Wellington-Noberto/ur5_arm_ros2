@@ -1,38 +1,16 @@
-/*********************************************************************
- * Software License Agreement (BSD License)
- *
- *  Copyright (c) 2012, Willow Garage, Inc.
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *   * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   * Neither the name of Willow Garage nor the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- *  POSSIBILITY OF SUCH DAMAGE.
- *********************************************************************/
+// Copyright (c) 2025, Wellington Araujo.
 
-/* Author: Sachin Chitta, Michael Lautman */
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <pluginlib/class_loader.hpp>
 
@@ -79,21 +57,13 @@ public:
       , tf_buffer_(this->get_clock())
       , tf_listener_(tf_buffer_)
   {
-    this->declare_parameter<std::string>("base_link", "base_link");
-    this->declare_parameter<std::string>("tool_link", "tool0");
-    this->declare_parameter<std::string>("tag_id", "apriltag_0");
-    this->declare_parameter<std::string>("planning_group", "ur_manipulator");
-    this->declare_parameter<double>("x_offset", 0.2);
-    this->declare_parameter<double>("y_offset", 0.0);
-    this->declare_parameter<double>("z_offset", 0.0);
-
-    this->get_parameter("base_link", base_link_);
-    this->get_parameter("tool_link", tool_link_);
-    this->get_parameter("tag_id", tag_id_);
-    this->get_parameter("planning_group", planning_group_);
-    this->get_parameter("x_offset", x_offset_);
-    this->get_parameter("y_offset", y_offset_);
-    this->get_parameter("z_offset", z_offset_);
+    this->get_parameter_or("base_link", base_link_, std::string("base_link"));
+    this->get_parameter_or("tool_link", tool_link_, std::string("tool0"));
+    this->get_parameter_or("tag_id", tag_id_, std::string("apriltag_0"));
+    this->get_parameter_or("planning_group", planning_group_, std::string("ur_manipulator"));
+    this->get_parameter_or("x_offset", x_offset_, 0.0);
+    this->get_parameter_or("y_offset", y_offset_, 0.0);
+    this->get_parameter_or("z_offset", z_offset_, 0.0);
   }
 
   void init()
@@ -106,6 +76,9 @@ public:
     }
 
     client_ = this->create_client<weaver_interfaces::srv::WeaverTrajectory>("trajectory_generator_service");
+    // Publisher for displaying planned path
+    display_publisher_ = this->create_publisher<moveit_msgs::msg::DisplayTrajectory>(
+      "/display_planned_path", rclcpp::QoS(1).transient_local());
 
     moveit_cpp_ = std::make_shared<moveit_cpp::MoveItCpp>(this->shared_from_this());
 
@@ -135,48 +108,73 @@ public:
     moveit_cpp_->getPlanningSceneMonitor()->providePlanningSceneService();
   }
 
+  /**
+   * @brief Loads the robot model and check joint group information
+   *
+   */
   void inspection()
   {
+    // Load robot model
     robot_model_loader::RobotModelLoader robot_model_loader(this->shared_from_this());
     const moveit::core::RobotModelPtr& kinematic_model = robot_model_loader.getModel();
     RCLCPP_INFO(LOGGER, "Model frame: %s", kinematic_model->getModelFrame().c_str());
-
+    // A robot state contains the configuration of the robot at a given time (joint positions, vel, etc.)
     moveit::core::RobotStatePtr kinematic_state(new moveit::core::RobotState(kinematic_model));
     kinematic_state->setToDefaultValues();
+    // A JointModelGroup represents the robot model for a given group (set of joints).
     joint_model_group = kinematic_model->getJointModelGroup(planning_group_);
-
+    // Get the names of the joints in the group.
     const std::vector<std::string>& joint_names = joint_model_group->getVariableNames();
-
+    // Get the default joint values for the group.
     std::vector<double> joint_values;
     kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+    // Print joint values of the group.
     for (std::size_t i = 0; i < joint_names.size(); ++i)
     {
       RCLCPP_INFO(this->get_logger(), "Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
     }
   }
 
-  void set_goal_pose()
+  /**
+   * @brief Get the goal pose, which makes the tool_link aligned with the tag_id frame to then perform the weaving task
+   *
+   * @return geometry_msgs::msg::PoseStamped
+   */
+  geometry_msgs::msg::PoseStamped set_goal_pose()
   {
-
+    // Get transforms from base_link to tool_link
     geometry_msgs::msg::TransformStamped base_tool_tf = tf_buffer_.lookupTransform(
         base_link_, tool_link_, tf2::TimePointZero);
+    // Get transform from tool_link to tag_id. This transformation is published by the marker_detector node
     geometry_msgs::msg::TransformStamped tool_tag_tf = tf_buffer_.lookupTransform(
         tool_link_, tag_id_, tf2::TimePointZero);
 
+    // Convert to Eigen
     Eigen::Affine3d base_tool_eigen = tf2::transformToEigen(base_tool_tf);
     Eigen::Affine3d tool_goal_eigen = tf2::transformToEigen(tool_tag_tf);
+    // This offset is the desired distance from the tool to the weaving board. Otherwise, the tool would collide with the board.
     tool_goal_eigen.translate(Eigen::Vector3d(x_offset_, y_offset_, z_offset_));
-    tool_goal_eigen.rotate(Eigen::AngleAxisd(M_PI, Eigen::Vector3d::UnitZ()));
 
+    // Get final goal pose in base_link frame
     Eigen::Affine3d base_goal_eigen = base_tool_eigen * tool_goal_eigen;
-
     geometry_msgs::msg::TransformStamped goal_pose = tf2::eigenToTransform(base_goal_eigen);
-
     RCLCPP_INFO(this->get_logger(),
                 "Transform from base to apriltag_0: translation [%.3f, %.3f, %.3f]",
                 goal_pose.transform.translation.x,
                 goal_pose.transform.translation.y,
                 goal_pose.transform.translation.z);
+
+    // Convert to PoseStamped
+    geometry_msgs::msg::PoseStamped pose;
+    pose.header = goal_pose.header;
+    // Set the position
+    pose.pose.position.x = goal_pose.transform.translation.x;
+    pose.pose.position.y = goal_pose.transform.translation.y;
+    pose.pose.position.z = goal_pose.transform.translation.z;
+    // Set the orientation
+    pose.pose.orientation = goal_pose.transform.rotation;
+
+    return pose;
   }
 
   void setup_planning_scene()
@@ -221,8 +219,55 @@ public:
       RCLCPP_ERROR_STREAM(LOGGER, "Task planning failed");
       return;
     }
+
+    // auto solution = task.solutions().front();
     const auto& solution = task.solutions().front();
+
+    auto sequence = std::dynamic_pointer_cast<const mtc::SolutionSequence>(task.solutions().front());
+    if (!sequence) {
+      RCLCPP_ERROR(LOGGER, "Top-level solution is not a SolutionSequence");
+      return;
+    }
+
+    for (const auto* sub : sequence->solutions()) {
+    auto sub_traj = dynamic_cast<const mtc::SubTrajectory*>(sub);
+    if (!sub_traj) continue;
+
+    auto robot_traj = sub_traj->trajectory();
+    if (!robot_traj) continue;
+
+    // Get planning group and JMG
+    auto jmg = moveit_cpp_->getRobotModel()->getJointModelGroup(planning_group_);
+    if (!jmg) {
+      RCLCPP_WARN(LOGGER, "Could not find JointModelGroup: %s", planning_group_.c_str());
+      continue;
+    }
+
+    RCLCPP_INFO(LOGGER, "Group name: %s", jmg->getName().c_str());
+    RCLCPP_INFO(LOGGER, "End Effector Tips: %s",
+                jmg->getLinkModelNames().back().c_str());
+
+
+    // Visualize the trajectory line in RViz
+    visual_tools_->publishTrajectoryLine(*robot_traj, jmg);
+
+    // Publish full trajectory message
+    moveit_msgs::msg::DisplayTrajectory display_trajectory;
+    robot_traj->getRobotTrajectoryMsg(display_trajectory.trajectory.emplace_back());
+
+    moveit::core::RobotState start_state = robot_traj->getFirstWayPoint();
+    moveit::core::robotStateToRobotStateMsg(start_state, display_trajectory.trajectory_start);
+
+    display_publisher_->publish(display_trajectory);
+  }
+    visual_tools_->trigger();
+
+
+    // Allow instrospection in Rviz
     task.introspection().publishSolution(*solution);
+    // Visualize the trajectory
+
+
 
     auto result = task.execute(*solution);
     if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
@@ -249,6 +294,7 @@ public:
     cartesian_planner->setIKFrame(tool_link_);
     cartesian_planner->setProperty("min_fraction", 0.1);
 
+    // Check if the robot state is complete
     auto state_monitor = moveit_cpp_->getPlanningSceneMonitor()->getStateMonitor();
 
     RCLCPP_INFO(this->get_logger(), "Waiting for complete robot state...");
@@ -260,22 +306,10 @@ public:
       return task;
     }
 
-    auto scene = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene();
-
-
     // Create stages
     {
       auto current = std::make_unique<mtc::stages::CurrentState>("current_state");
-
-      auto planning_scene = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene();
-      auto robot_model = moveit_cpp_->getRobotModel();
-      moveit::core::RobotState current_state = planning_scene->getCurrentState();
-
-      const std::vector<std::string>& joint_names = current_state.getVariableNames();
-      for (const auto& joint_name : joint_names) {
-        double value = current_state.getVariablePosition(joint_name);
-        RCLCPP_INFO(this->get_logger(), "Joint %s = %f", joint_name.c_str(), value);
-      }
+      // TODO: Log current joint values
 
       task.add(std::move(current));
     }
@@ -285,8 +319,6 @@ public:
       auto stage = std::make_unique<mtc::stages::MoveTo>("goal_pose", cartesian_planner);
       stage->setGroup(planning_group_);
       stage->setIKFrame(tool_link_);
-
-      // stage->setGoalConstraints({});
 
       stage->setGoal(target_pose);
       task.add(std::move(stage));
@@ -304,7 +336,7 @@ public:
     task.setProperty("ik_frame", tool_link_);
 
     // Planners
-    auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
+    // auto interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
 
     auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
     cartesian_planner->setMaxVelocityScalingFactor(0.2);
@@ -325,21 +357,11 @@ public:
       return task;
     }
 
-    auto scene = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene();
-
     // Create stages
     {
       auto current = std::make_unique<mtc::stages::CurrentState>("current_state");
 
-      auto planning_scene = moveit_cpp_->getPlanningSceneMonitor()->getPlanningScene();
-      auto robot_model = moveit_cpp_->getRobotModel();
-      moveit::core::RobotState current_state = planning_scene->getCurrentState();
-
-      const std::vector<std::string>& joint_names = current_state.getVariableNames();
-      for (const auto& joint_name : joint_names) {
-        double value = current_state.getVariablePosition(joint_name);
-        RCLCPP_INFO(this->get_logger(), "Joint %s = %f", joint_name.c_str(), value);
-      }
+      // TODO: Log current joint values
 
       task.add(std::move(current));
     }
@@ -353,8 +375,6 @@ public:
       stage->setGoal(waypoints[i]);
       task.add(std::move(stage));
     }
-
-
 
     return task;
   }
@@ -385,8 +405,10 @@ std::vector<geometry_msgs::msg::PoseStamped> call_trajectory_service()
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
 
-  if (rclcpp::ok()) {
+  if (rclcpp::ok())
+  {
       auto response = future.get();
+      RCLCPP_INFO(this->get_logger(), "Number of waypoints %ld", response->waypoints.size());
       return response->waypoints;
   } else {
       RCLCPP_ERROR(this->get_logger(), "Service call interrupted");
@@ -409,6 +431,8 @@ private:
   std::shared_ptr<moveit_visual_tools::MoveItVisualTools> visual_tools_;
 
   rclcpp::Client<weaver_interfaces::srv::WeaverTrajectory>::SharedPtr client_;
+  rclcpp::Publisher<moveit_msgs::msg::DisplayTrajectory>::SharedPtr display_publisher_;
+
 
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
@@ -439,37 +463,41 @@ int main(int argc, char **argv)
   std::vector<geometry_msgs::msg::PoseStamped> waypoints_weaver;
   waypoints_weaver = node->call_trajectory_service();
 
-
   // [0.445, -0.011, -0.090]
-  std::vector<geometry_msgs::msg::PoseStamped> waypoints;
-
-  geometry_msgs::msg::PoseStamped target_pose;
-  target_pose.header.frame_id = "base_link";
-  target_pose.pose.position.x = 0.0;
-  target_pose.pose.position.y = 0.7;
-  target_pose.pose.position.z = 0.3;
-  target_pose.pose.orientation.x = 1.0;
-  target_pose.pose.orientation.w = 0.0;
-
-  waypoints.push_back(target_pose);
-  for (const auto &pose : waypoints_weaver)
-  {
-    geometry_msgs::msg::PoseStamped pose_wp = target_pose;
-    pose_wp.pose.position.x += pose.pose.position.x;
-    pose_wp.pose.position.y += pose.pose.position.y;
-    waypoints.push_back(pose_wp);
-  }
 
   // Add obstacles
   node->setup_planning_scene();
 
   // Task homing
+  geometry_msgs::msg::PoseStamped target_pose;
+  target_pose.header.frame_id = "base_link";
+  target_pose.pose.position.x = 0.1;
+  target_pose.pose.position.y = 0.6;
+  target_pose.pose.position.z = 0.3;
+  target_pose.pose.orientation.x = 1.0;
+  target_pose.pose.orientation.w = 0.0;
   mtc::Task task_homing = node->create_move_to_task("homing pose", target_pose);
   node->doTask(task_homing);
 
   node->prompt_moveit();
 
+  // Task approach
+  geometry_msgs::msg::PoseStamped board_pose = node->set_goal_pose();
+  mtc::Task task_apprach = node->create_move_to_task("approach board", board_pose);
+  node->doTask(task_apprach);
+
+  node->prompt_moveit();
+
   // Weaver task
+  std::vector<geometry_msgs::msg::PoseStamped> waypoints;
+  waypoints.push_back(board_pose);
+  for (const auto &pose : waypoints_weaver)
+  {
+    geometry_msgs::msg::PoseStamped pose_wp = board_pose;
+    pose_wp.pose.position.x += pose.pose.position.x;
+    pose_wp.pose.position.y += pose.pose.position.y;
+    waypoints.push_back(pose_wp);
+  }
   mtc::Task task_weaver = node->create_task("weaver task", waypoints);
   node->doTask(task_weaver);
 
