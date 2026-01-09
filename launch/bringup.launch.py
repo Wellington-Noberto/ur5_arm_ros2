@@ -12,14 +12,13 @@ from ur_moveit_config.launch_common import load_yaml
 from ament_index_python.packages import get_package_share_directory
 
 
-
-
 def generate_launch_description():
     # Get URDF via xacro
 
     package_name = "ur5_weaver"
-    runtime_config_package = "ur_robot_driver"
     ur_description_config_package = "ur_description"
+
+    robot_name = "ur"
     ur_type = "ur5e"
     description_file = "ur.urdf.xacro"
     moveit_config_file = "ur.srdf.xacro"
@@ -50,7 +49,7 @@ def generate_launch_description():
                 PathJoinSubstitution([FindPackageShare(package_name), "urdf", description_file]),
                 " ",
                 "name:=",
-                "ur",
+                robot_name,
                 " ",
                 "ur_type:=",
                 ur_type,
@@ -76,8 +75,6 @@ def generate_launch_description():
                 "visual_params:=",
                 visual_params,
                 " ",
-
-
             ]
         ),
         value_type=str
@@ -95,7 +92,7 @@ def generate_launch_description():
                 ),
                 " ",
                 "name:=",
-                "ur",
+                robot_name,
                 " ",
                 "prefix:=",
                 "",
@@ -127,7 +124,6 @@ def generate_launch_description():
             os.path.join("config", "joint_limits.yaml"),
         )
     }
-
 
     # Planning Configuration
     ompl_planning_pipeline_config = {
@@ -198,7 +194,7 @@ def generate_launch_description():
             trajectory_execution,
             moveit_controllers,
             planning_scene_monitor_parameters,
-            move_group_capabilities, # mtc
+            move_group_capabilities,
             {"planning_pipelines": ["ompl"]},
             {"ompl.planning_plugins": ["ompl_interface/OMPLPlanner"]},
             {"use_sim_time": use_sim_time},
@@ -274,7 +270,7 @@ def generate_launch_description():
     world_config_file = PathJoinSubstitution([
         FindPackageShare("ur5_weaver"),
         "worlds",
-        "scene.sdf"
+        world_file
     ])
 
     gazebo = IncludeLaunchDescription(
@@ -324,6 +320,20 @@ def generate_launch_description():
         ]
     )
 
+    ### Weaver trajectory generator server
+    weaver_gen_config_path = os.path.join(
+        get_package_share_directory('weaver_trajectory_generator'),
+        'config',
+        'weaver_settings.config'
+    )
+
+    weaver_trajectory_generator = Node(
+        package='weaver_trajectory_generator',
+        executable='weaver_trajectory_server',
+        name='weaver_trajectory_generator',
+        output='screen',
+        arguments=[weaver_gen_config_path]
+    )
 
     ###
     delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
@@ -358,7 +368,7 @@ def generate_launch_description():
         gazebo,
         gazebo_spawn_robot,
 
-        # static_tf,
+        weaver_trajectory_generator,
         gz_parameters_bridge,
         rviz_node,
         delay_joint_state_broadcaster_after_robot_controller_spawner,
