@@ -12,6 +12,7 @@
   <depend>rclcpp</depend>
   <depend>ros2_control</depend>
   <depend>ros_gz_sim</depend>
+  <depend>ompl</depend>
   <depend>moveit_kinematics</depend>
   <depend>moveit_planners_ompl</depend>
   <depend>moveit_ros_move_group</depend>
@@ -24,6 +25,12 @@
   <depend>pluginlib</depend>
   <depend>cv_bridge</depend>
   <depend>apriltag</depend>
+  <depend>weaver_interfaces</depend>
+
+
+  <depend>moveit_task_constructor_core</depend>
+  <depend>moveit_task_constructor_msgs</depend>
+  <depend>moveit_task_constructor_capabilities</depend>
 
 
   <test_depend>ament_lint_auto</test_depend>

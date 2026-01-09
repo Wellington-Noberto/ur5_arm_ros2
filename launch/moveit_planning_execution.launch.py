@@ -13,6 +13,7 @@ def generate_launch_description():
     ur_type = "ur5e"
     description_file = "ur.urdf.xacro"
     moveit_config_file = "ur.srdf.xacro"
+    planning_scene_file = "planning_scene.yaml"
 
     joint_limit_params = PathJoinSubstitution(
         [FindPackageShare(ur_description_config_package), "config", ur_type, "joint_limits.yaml"]
@@ -104,16 +105,18 @@ def generate_launch_description():
         )
     }
 
-    ompl_planning_pipeline_config = {
-        "ompl": {
-            "planning_plugin": "ompl_interface/OMPLPlanner",
-            "request_adapters": """default_planner_request_adapters/AddTimeOptimalParameterization default_planner_request_adapters/FixWorkspaceBounds default_planner_request_adapters/FixStartStateBounds default_planner_request_adapters/FixStartStateCollision default_planner_request_adapters/FixStartStatePathConstraints""",
-            "start_state_max_bounds_error": 0.1,
-        }
-    }
+    mission_planning_params = PathJoinSubstitution(
+        [FindPackageShare(package_name), "config", "mission_planner.yaml"]
+    )
 
-    ompl_planning_yaml = load_yaml("ur_moveit_config", "config/ompl_planning.yaml")
-    ompl_planning_pipeline_config["ompl"].update(ompl_planning_yaml)
+
+    planning_scene_yaml = load_yaml(package_name, os.path.join("config", planning_scene_file))
+    planning_scene_monitor_parameters = {
+        "publish_planning_scene": True,
+        "publish_geometry_updates": True,
+        "publish_state_updates": True,
+        "publish_transforms_updates": True,
+    }
 
      # Trajectory Execution Configuration
     controllers_yaml = load_yaml(package_name, "config/controllers.yaml")
@@ -128,20 +131,30 @@ def generate_launch_description():
         "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager",
     }
 
+    move_group_capabilities = {
+        "capabilities": "move_group/ExecuteTaskSolutionCapability"
+    }
 
     tutorial_node = Node(
         package=package_name,
-        executable="motion_planning_api_tutorial",
+        executable="motion_planner",
         output="screen",
         parameters=[
             robot_description,
             robot_description_semantic,
             robot_description_kinematics,
             robot_description_planning,
-            ompl_planning_pipeline_config,
+            planning_scene_monitor_parameters,
+            # ompl_planning_pipeline_config,
             moveit_controllers,
-            {"planning_pipelines": ["ompl"]},
-            {"ompl.planning_plugins": ["ompl_interface/OMPLPlanner"]},
+            {"use_sim_time": True},
+            move_group_capabilities,
+            mission_planning_params,
+            # planning_pipeline_config,
+            planning_scene_yaml,
+            {"trajectory_execution.allowed_start_tolerance": 0.5},
+            # {"ompl.planning_plugins": ["ompl_interface/OMPLPlanner"]},
+            # {"use_sim_time": True}
         ],
     )
 
