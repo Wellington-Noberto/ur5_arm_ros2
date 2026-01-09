@@ -12,6 +12,7 @@
   <depend>rclcpp</depend>
   <depend>ros2_control</depend>
   <depend>ros_gz_sim</depend>
+  <depend>ompl</depend>
   <depend>moveit_kinematics</depend>
   <depend>moveit_planners_ompl</depend>
   <depend>moveit_ros_move_group</depend>

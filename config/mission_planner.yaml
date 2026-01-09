@@ -1,11 +1,11 @@
-spawn_pose:
+mission_planner:
   ros__parameters:
 
     base_link: "base_link"
     tool_link: "tool0"
     tag_id: "apriltag_0"
-    x_offset: 0.2
+    x_offset: 0.0
     y_offset: 0.0
-    z_offset: 0.0
+    z_offset: -0.2
 
     planning_group: "ur_manipulator"

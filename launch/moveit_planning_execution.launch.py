@@ -105,6 +105,10 @@ def generate_launch_description():
         )
     }
 
+    mission_planning_params = PathJoinSubstitution(
+        [FindPackageShare(package_name), "config", "mission_planner.yaml"]
+    )
+
 
     planning_scene_yaml = load_yaml(package_name, os.path.join("config", planning_scene_file))
     planning_scene_monitor_parameters = {
@@ -145,6 +149,7 @@ def generate_launch_description():
             moveit_controllers,
             {"use_sim_time": True},
             move_group_capabilities,
+            mission_planning_params,
             # planning_pipeline_config,
             planning_scene_yaml,
             {"trajectory_execution.allowed_start_tolerance": 0.5},
