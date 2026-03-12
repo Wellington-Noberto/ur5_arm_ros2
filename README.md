@@ -31,6 +31,10 @@ Finally, to generate the trajectory from the image and make the robot move, simp
 ros2 launch ur5_weaver motion_planning.launch.py
 ```
 
+## Future Works
+### Display trajectory
+By using the MoveitTaskConstructor (MTC) to manage the trajectories, we're not able to publish the trajectories segments and visualize in Rviz.
+One solution is to rewrite the code to work with PlanningComponents.
 ## MoveitCpp
 
 ### RobotModel

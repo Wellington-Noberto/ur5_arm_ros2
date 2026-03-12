@@ -229,46 +229,44 @@ public:
       return;
     }
 
-    for (const auto* sub : sequence->solutions()) {
-    auto sub_traj = dynamic_cast<const mtc::SubTrajectory*>(sub);
-    if (!sub_traj) continue;
+    for (const auto* sub : sequence->solutions())
+    {
+      auto sub_traj = dynamic_cast<const mtc::SubTrajectory*>(sub);
+      if (!sub_traj) continue;
 
-    auto robot_traj = sub_traj->trajectory();
-    if (!robot_traj) continue;
+      auto robot_traj = sub_traj->trajectory();
+      if (!robot_traj) continue;
 
-    // Get planning group and JMG
-    auto jmg = moveit_cpp_->getRobotModel()->getJointModelGroup(planning_group_);
-    if (!jmg) {
-      RCLCPP_WARN(LOGGER, "Could not find JointModelGroup: %s", planning_group_.c_str());
-      continue;
-    }
+      // Get planning group and JointModelGroup
+      auto joint_model_group = moveit_cpp_->getRobotModel()->getJointModelGroup(planning_group_);
+      if (!joint_model_group) {
+        RCLCPP_WARN(LOGGER, "Could not find JointModelGroup: %s", planning_group_.c_str());
+        continue;
+      }
 
-    RCLCPP_INFO(LOGGER, "Group name: %s", jmg->getName().c_str());
-    RCLCPP_INFO(LOGGER, "End Effector Tips: %s",
-                jmg->getLinkModelNames().back().c_str());
+      RCLCPP_INFO(LOGGER, "Group name: %s", joint_model_group->getName().c_str());
+      RCLCPP_INFO(LOGGER, "End Effector Tips: %s",
+                  joint_model_group->getLinkModelNames().back().c_str());
 
+      // Visualize the trajectory line in RViz
+      visual_tools_->publishTrajectoryLine(*robot_traj, joint_model_group);
 
-    // Visualize the trajectory line in RViz
-    visual_tools_->publishTrajectoryLine(*robot_traj, jmg);
+      // Publish full trajectory message
+      moveit_msgs::msg::DisplayTrajectory display_trajectory;
+      robot_traj->getRobotTrajectoryMsg(display_trajectory.trajectory.emplace_back());
 
-    // Publish full trajectory message
-    moveit_msgs::msg::DisplayTrajectory display_trajectory;
-    robot_traj->getRobotTrajectoryMsg(display_trajectory.trajectory.emplace_back());
+      moveit::core::RobotState start_state = robot_traj->getFirstWayPoint();
+      moveit::core::robotStateToRobotStateMsg(start_state, display_trajectory.trajectory_start);
 
-    moveit::core::RobotState start_state = robot_traj->getFirstWayPoint();
-    moveit::core::robotStateToRobotStateMsg(start_state, display_trajectory.trajectory_start);
-
-    display_publisher_->publish(display_trajectory);
+      display_publisher_->publish(display_trajectory);
   }
     visual_tools_->trigger();
-
 
     // Allow instrospection in Rviz
     task.introspection().publishSolution(*solution);
     // Visualize the trajectory
 
-
-
+    // Execute the trajectory
     auto result = task.execute(*solution);
     if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
     {
