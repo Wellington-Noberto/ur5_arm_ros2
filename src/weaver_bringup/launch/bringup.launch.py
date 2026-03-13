@@ -16,6 +16,7 @@ def generate_launch_description():
     # Get URDF via xacro
 
     package_name = "weaver_bringup"
+    perception_package_name = "weaver_perception"
     ur_description_config_package = "ur_description"
 
     robot_name = "ur"
@@ -134,7 +135,7 @@ def generate_launch_description():
         }
     }
 
-    ompl_planning_yaml = load_yaml("ur_moveit_config", "config/ompl_planning.yaml")
+    ompl_planning_yaml = load_yaml(package_name, "config/ompl_planning.yaml")
     ompl_planning_pipeline_config["ompl"].update(ompl_planning_yaml)
 
     # Trajectory Execution Configuration
@@ -209,7 +210,7 @@ def generate_launch_description():
 
     # Apriltag detection
     marker_detector_node = Node(
-        package=package_name,
+        package=perception_package_name,
         executable="marker_detector",
         output="both",
         parameters=[marker_detector_config_file],
@@ -268,7 +269,7 @@ def generate_launch_description():
     ### Gazebo nodes
 
     world_config_file = PathJoinSubstitution([
-        FindPackageShare("ur5_weaver"),
+        FindPackageShare("weaver_bringup"),
         "worlds",
         world_file
     ])
