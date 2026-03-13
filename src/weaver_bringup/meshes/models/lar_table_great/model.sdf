@@ -21,7 +21,7 @@
       <visual name='visual'>
         <geometry>
           <mesh>
-            <uri>model://ur5_weaver/meshes/models/lar_table_great/meshes/lar_table_great.dae</uri>
+            <uri>model://weaver_bringup/meshes/models/lar_table_great/meshes/lar_table_great.dae</uri>
             <!-- <scale>0.7 0.7 0.7</scale> -->
           </mesh>
         </geometry>
@@ -40,7 +40,7 @@
         <pose frame=''>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
-            <uri>model://ur5_weaver/meshes/models/lar_table_great/meshes/lar_table_great.dae</uri>
+            <uri>model://weaver_bringup/meshes/models/lar_table_great/meshes/lar_table_great.dae</uri>
             <!-- <scale>0.7 0.7 0.7</scale> -->
           </mesh>
         </geometry>

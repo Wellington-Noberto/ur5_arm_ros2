@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="cam_support" >
 
   <!-- Realsense d435 -->
-  <xacro:include filename="$(find ur5_weaver)/urdf/_d435.urdf.xacro" />
+  <xacro:include filename="$(find weaver_bringup)/urdf/_d435.urdf.xacro" />
 
   <!-- Frame coincident with all-zeros TCP on UR controller -->
   <xacro:property name="tool0_offset" value="0.15"/>
@@ -47,7 +47,7 @@
       <!-- The cam is rotated 14 degrees (0.24rad) through the yaw axis -->
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ur5_weaver/meshes/protos/CAM_support.STL" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://weaver_bringup/meshes/protos/CAM_support.STL" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="Cyan">
         <color rgba="0.91 0.91 0.88 1.0"/>

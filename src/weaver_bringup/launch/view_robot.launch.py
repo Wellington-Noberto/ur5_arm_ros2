@@ -8,7 +8,7 @@ import os
 
 def generate_launch_description():
     # Change this to match your actual package and urdf file
-    package_name = "ur5_weaver"
+    package_name = "weaver_bringup"
     runtime_config_package = "ur_robot_driver"
     ur_description_config_package = "ur_description"
     ur_type = "ur5e"

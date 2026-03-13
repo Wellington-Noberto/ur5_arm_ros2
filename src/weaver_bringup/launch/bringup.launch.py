@@ -15,7 +15,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     # Get URDF via xacro
 
-    package_name = "ur5_weaver"
+    package_name = "weaver_bringup"
     ur_description_config_package = "ur_description"
 
     robot_name = "ur"

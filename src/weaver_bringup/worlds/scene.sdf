@@ -27,7 +27,7 @@
     <model name='lar_floor'>
       <pose>0 -0.25 0 0 -0 0</pose>
       <include>
-        <uri> model://ur5_weaver/meshes/models/lar_floor</uri>
+        <uri> model://weaver_bringup/meshes/models/lar_floor</uri>
         <name> floor </name>
         <static>1</static>
       </include>
@@ -36,7 +36,7 @@
     <model name='lar_walls'>
       <pose>0 1 0 0 0 0</pose>
       <include>
-        <uri> model://ur5_weaver/meshes/models/lar_walls</uri>
+        <uri> model://weaver_bringup/meshes/models/lar_walls</uri>
         <name> walls </name>
         <static>1</static>
       </include>
@@ -45,7 +45,7 @@
     <model name='lar_table_great_0'>
       <pose>1.9 -2.0 0 0 0 0</pose>
       <include>
-        <uri> model://ur5_weaver/meshes/models/lar_table_great</uri>
+        <uri> model://weaver_bringup/meshes/models/lar_table_great</uri>
         <name> great_table_0 </name>
         <static>1</static>
       </include>
@@ -54,7 +54,7 @@
     <model name='lar_table_great_1'>
       <pose>-0.55 5.15 0 0 -0 1.5708</pose>
       <include>
-        <uri> model://ur5_weaver/meshes/models/lar_table_great</uri>
+        <uri> model://weaver_bringup/meshes/models/lar_table_great</uri>
         <name> great_table_1 </name>
         <static>1</static>
       </include>
@@ -62,7 +62,7 @@
 
     <include>
       <pose>1.9 -1.3 0.87 0 0 1.57</pose>
-      <uri>model://ur5_weaver/meshes/models/apriltags</uri>
+      <uri>model://weaver_bringup/meshes/models/apriltags</uri>
       <name>apriltag_0</name>
     </include>
 

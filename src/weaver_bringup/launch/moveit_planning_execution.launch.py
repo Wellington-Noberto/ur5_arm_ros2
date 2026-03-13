@@ -8,7 +8,7 @@ from ur_moveit_config.launch_common import load_yaml
 import os
 
 def generate_launch_description():
-    package_name = "ur5_weaver"
+    package_name = "weaver_bringup"
     ur_description_config_package = "ur_description"
     ur_type = "ur5e"
     description_file = "ur.urdf.xacro"
