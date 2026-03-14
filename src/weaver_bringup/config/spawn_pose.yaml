@@ -1,9 +1,0 @@
-spawn_pose:
-  ros__parameters:
-    robot_name: ur5e
-    x: 1.9
-    y: -2.0
-    z: 0.85
-    roll: 0.0
-    pitch: 0.0
-    yaw: 0.0
