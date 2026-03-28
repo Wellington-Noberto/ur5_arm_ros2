@@ -4,19 +4,9 @@
 ROS2 - Humble
 ## Requirements
 
-- [Install RealSense](https://github.com/IntelRealSense/realsense-ros#installation-on-ubuntu)
-
-- [UR](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/humble)
-- weaver_interfaces
-- weaver_trajectory_generator
-- Moveit2
-
-```
-sudo apt update
-sudo apt install ros-humble-cv-bridge ros-humble-image-transport libopencv-dev
-sudo apt install ros-humble-vision-opencv
-sudo apt install libapriltag-dev
-```
+- [UR_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver)
+- [UR_Description](https://github.com/UniversalRobots/Universal_Robots_ROS2_Description)
+- [UR_Client_Library](https://github.com/UniversalRobots/Universal_Robots_Client_Library)
 
 
 ## How to run the simulation

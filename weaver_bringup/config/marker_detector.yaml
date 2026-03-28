@@ -1,0 +1,9 @@
+marker_detector:
+  ros__parameters:
+    camera_frame_id: "camera_ros_link"
+    tool_frame_id: "tool0"
+    tag_size: 0.1
+    fx: 554.3827056884766
+    fy: 554.3827056884766
+    cx: 320.0
+    cy: 240.0
